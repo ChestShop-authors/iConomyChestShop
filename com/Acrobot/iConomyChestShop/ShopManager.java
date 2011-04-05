@@ -2,6 +2,7 @@ package com.Acrobot.iConomyChestShop;
 
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
 import java.util.logging.Level;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -62,7 +63,9 @@ public class ShopManager extends PlayerListener {
             if (ownerPlayer == null) {
                 return;
             }
-            ownerPlayer.sendMessage(ConfigManager.getLanguage("Your_shop_is_out_of_stock"));
+            String msg = ConfigManager.getLanguage("Your_shop_is_out_of_stock");
+            msg = msg.replace("<item>", line[3]);
+            ownerPlayer.sendMessage(msg);
             return;
         }
         
