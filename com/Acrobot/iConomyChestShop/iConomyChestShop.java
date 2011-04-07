@@ -80,6 +80,7 @@ public class iConomyChestShop extends JavaPlugin {
     }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+        PluginDescriptionFile pdfFile = this.getDescription();
         String commandName = cmd.getName().toLowerCase();
 
         if (sender instanceof Player) {
@@ -90,6 +91,10 @@ public class iConomyChestShop extends JavaPlugin {
             }
             if (commandName.equals("sell")) {
                 sellCommand(player);
+                return true;
+            }
+            if(commandName.equals("icsversion")){
+                player.sendMessage("iConomyChestShop's version is: " + pdfFile.getVersion());
                 return true;
             }
             if(commandName.equals("chest")){

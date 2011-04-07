@@ -2,7 +2,7 @@ name: iConomyChestShop
 
 main: com.Acrobot.iConomyChestShop.iConomyChestShop
 
-version: 2.1
+version: 2.11
 
 author: Acrobot
 description: >
@@ -28,3 +28,9 @@ commands:
     description: Lists item id and names
     usage: |
            /<command> <partial item name or id>
+  icsVersion:
+    aliases:
+    description: Shows the iConomyChestShop's version
+    usage: |
+           /<command>
+           

@@ -24,7 +24,10 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         Block clickedBlock = event.getClickedBlock();
         Action action = event.getAction();
         boolean sneakMode = ConfigManager.getBoolean("sneakMode");
-        if (action != Action.RIGHT_CLICK_BLOCK && (action != Action.LEFT_CLICK_BLOCK && sneakMode)) {
+        if (action != Action.RIGHT_CLICK_BLOCK && action != Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
+        if(action == Action.LEFT_CLICK_BLOCK && !sneakMode){
             return;
         }
         if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.admin")) {
