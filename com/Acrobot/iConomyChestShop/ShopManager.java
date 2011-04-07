@@ -1,8 +1,6 @@
 package com.Acrobot.iConomyChestShop;
 
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
-import java.util.logging.Level;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -38,7 +36,7 @@ public class ShopManager extends PlayerListener {
             return;
         }
         int amount = Integer.parseInt(line[1]);
-        Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()));
+        Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
         if(chestBlock.getTypeId() != 54){
             return;
         }
@@ -81,7 +79,7 @@ public class ShopManager extends PlayerListener {
         Logging.log(buyer + " bought " + is.getType() + " with durability of " 
                 + is.getDurability() + " from " + seller + " for " + price + " " 
                 + iConomyManager.getCurrency());
-        ConfigManager.buyingString(amount, is.getType().name(), seller, player, price);
+        ConfigManager.buyingString(amount, line[3], seller, player, price);
         
     }
 
@@ -103,7 +101,7 @@ public class ShopManager extends PlayerListener {
             player.sendMessage(ConfigManager.getLanguage("No_selling_to_this_shop"));
             return;
         }
-        Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()));
+        Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
         if(chestBlock.getTypeId() != 54){
             return;
         }
@@ -142,7 +140,7 @@ public class ShopManager extends PlayerListener {
         Logging.log(seller + " sold " + is.getType() + " with durability of " 
                 + is.getDurability() + " to " + shop + " for " + price + " " 
                 + iConomyManager.getCurrency());
-        ConfigManager.sellingString(amount, is.getType().name(), shop, player, price);
+        ConfigManager.sellingString(amount, line[3], shop, player, price);
     }
 
     public static void adminSell(PlayerInteractEvent event) {
@@ -165,7 +163,7 @@ public class ShopManager extends PlayerListener {
         Logging.log(seller + " sold " + is.getType() + " with durability of " 
                 + is.getDurability() + " to admin shop for " + price + " " 
                 + iConomyManager.getCurrency());
-        ConfigManager.sellingString(amount, is.getType().name(), "admin shop", player, price);
+        ConfigManager.sellingString(amount, line[3], "admin shop", player, price);
     }
 
     public static void adminBuy(PlayerInteractEvent event) {
@@ -189,6 +187,6 @@ public class ShopManager extends PlayerListener {
         Logging.log(buyer + " bought " + is.getType() + " with durability of " 
                 + is.getDurability() + " from admin shop for " + price + " " 
                 + iConomyManager.getCurrency());
-        ConfigManager.buyingString(amount, is.getType().name(), "admin shop", player, price);
+        ConfigManager.buyingString(amount, line[3], "admin shop", player, price);
     }
 }

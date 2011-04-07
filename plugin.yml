@@ -2,7 +2,7 @@ name: iConomyChestShop
 
 main: com.Acrobot.iConomyChestShop.iConomyChestShop
 
-version: 2.01
+version: 2.1
 
 author: Acrobot
 description: >
@@ -22,7 +22,7 @@ commands:
     aliases:
     description: Used to toggle shopping mode
     usage: |
-           /<command> <buy|sell>
+           /<command> <buy|sell|help>
   iteminfo:
     aliases:
     description: Lists item id and names

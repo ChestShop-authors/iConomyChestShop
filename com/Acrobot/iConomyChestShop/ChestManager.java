@@ -64,7 +64,7 @@ public class ChestManager{
                 if(Items[i] == null){
                     continue;
                 }
-                if(Items[i].getType() == is.getType() && Items[i].getDurability() == is.getDurability()){
+                if((Items[i].getType() == is.getType() && Items[i].getDurability() == is.getDurability())){
                     count += Items[i].getAmount();
                 }
             }

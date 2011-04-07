@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 public class Basic {
 
     public static OddItem OI = null;
-
+    
     //Checks if string is an integer
     public static boolean isInt(String i) {
         try {
@@ -51,7 +51,7 @@ public class Basic {
             return Material.getMaterial(returnID(name));
         }
     }
-    
+
     //Gets the Material from ID
     public static Material getMat(int id) {
         return Material.getMaterial(id);
@@ -80,10 +80,10 @@ public class Basic {
     public static ItemStack getItemStack(String name) {
         Material mat = getMat(name);
         if (OI != null) {
-            try{
+            try {
                 return OI.getItemStack(name);
-            }catch(IllegalArgumentException e){
-                if(mat != null){
+            } catch (IllegalArgumentException e) {
+                if (mat != null) {
                     return new ItemStack(mat);
                 }
             }
@@ -128,7 +128,7 @@ public class Basic {
             return true;
         }
     }
-    
+
     public static String stripName(String name) {
         int length = name.length();
         if (length > 15) {
@@ -136,48 +136,49 @@ public class Basic {
         }
         return name.substring(0, length);
     }
-    
+
     public static int getItemAmountFromInventory(Inventory inv, ItemStack is) {
-            int count = 0;
-            ItemStack Items[] = inv.getContents();
-            for (int i = 0; i < Items.length; i++) {
-                if(Items[i] == null){
-                    continue;
-                }
-                if(Items[i].getType() == is.getType() && (Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1)){
-                    count += Items[i].getAmount();
-                }
+        int count = 0;
+        ItemStack Items[] = inv.getContents();
+        for (int i = 0; i < Items.length; i++) {
+            if (Items[i] == null) {
+                continue;
             }
-            return count;
+            if (Items[i].getType() == is.getType() && (Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1)) {
+                count += Items[i].getAmount();
+            }
+        }
+        return count;
     }
+
     public static void removeItemStackFromInventory(Inventory inv, ItemStack is) {
-            ItemStack[] Items = inv.getContents();
-            int left = is.getAmount();
-            for(int i = 0; i < Items.length; i++){
-                if(left <= 0){
-                    return;
-                }
-                ItemStack curItem = Items[i];
-                if(curItem == null){
-                    continue;
-                }
-                if(curItem.getType() == is.getType() && (curItem.getDurability() == is.getDurability() || curItem.getDurability() == -1)){
-                    if(curItem.getAmount() > left){
-                        curItem.setAmount(curItem.getAmount() - left);
-                        left -= curItem.getAmount();
-                    }else{
-                        left -= curItem.getAmount();
-                        curItem = null;
-                    }
-                }
-                if (curItem != null) {
-                    if (curItem.getType() != Material.AIR) {
-                        inv.setItem(i, curItem);
-                    }
-                }else{
-                    inv.setItem(i, null);
-                }
-                
+        ItemStack[] Items = inv.getContents();
+        int left = is.getAmount();
+        for (int i = 0; i < Items.length; i++) {
+            if (left <= 0) {
+                return;
             }
+            ItemStack curItem = Items[i];
+            if (curItem == null) {
+                continue;
+            }
+            if (curItem.getType() == is.getType() && (curItem.getDurability() == is.getDurability() || curItem.getDurability() == -1)) {
+                if (curItem.getAmount() > left) {
+                    curItem.setAmount(curItem.getAmount() - left);
+                    left -= curItem.getAmount();
+                } else {
+                    left -= curItem.getAmount();
+                    curItem = null;
+                }
+            }
+            if (curItem != null) {
+                if (curItem.getType() != Material.AIR) {
+                    inv.setItem(i, curItem);
+                }
+            } else {
+                inv.setItem(i, null);
+            }
+
+        }
     }
 }

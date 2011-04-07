@@ -47,25 +47,18 @@ public class ConfigManager {
     public static void buyingString(int amount, String item, String owner, Player player, int cost) {
         String str = getLanguage("You_bought_items");
         str = str.replace("<amount>", amount + "");
-        String alias = Basic.returnAlias(item);
-        String itemAlias = "";
-        if (alias != null) {
-            itemAlias = alias;
-        } else {
-            itemAlias = item;
-        }
-        str = str.replace("<item>", itemAlias);
+        str = str.replace("<item>", item);
         str = str.replace("<owner>", owner);
 
         player.sendMessage(str);
         moneyLeft(player);
-        buyingStringForShopOwner(amount, itemAlias, owner, player, cost);
+        buyingStringForShopOwner(amount, item, owner, player, cost);
     }
 
-    public static void buyingStringForShopOwner(int amount, String itemAlias, String owner, Player player, int cost) {
+    public static void buyingStringForShopOwner(int amount, String item, String owner, Player player, int cost) {
         String str = getLanguage("Somebody_bought_items_from_your_shop");
         str = str.replace("<amount>", amount + "");
-        str = str.replace("<item>", itemAlias);
+        str = str.replace("<item>", item);
         str = str.replace("<buyer>", player.getName());
         str = str.replace("<cost>", formattedBalance(cost));
         Player ownerPlayer = iConomyChestShop.getBukkitServer().getPlayer(owner);
@@ -75,10 +68,10 @@ public class ConfigManager {
         ownerPlayer.sendMessage(str);
     }
     
-    public static void sellingStringForShopOwner(int amount, String itemAlias, String owner, Player player, int cost) {
+    public static void sellingStringForShopOwner(int amount, String item, String owner, Player player, int cost) {
         String str = getLanguage("Somebody_sold_items_to_your_shop");
         str = str.replace("<amount>", amount + "");
-        str = str.replace("<item>", itemAlias);
+        str = str.replace("<item>", item);
         str = str.replace("<seller>", player.getName());
         str = str.replace("<cost>", formattedBalance(cost));
         Player ownerPlayer = iConomyChestShop.getBukkitServer().getPlayer(owner);
@@ -91,19 +84,12 @@ public class ConfigManager {
     public static void sellingString(int amount, String item, String owner, Player player, int cost) {
         String str = getLanguage("You_sold_items");
         str = str.replace("<amount>", amount + "");
-        String alias = Basic.returnAlias(item);
-        String itemAlias = "";
-        if (alias != null) {
-            itemAlias = alias;
-        } else {
-            itemAlias = item;
-        }
-        str = str.replace("<item>", itemAlias);
+        str = str.replace("<item>", item);
         str = str.replace("<owner>", owner);
         str = str.replace("<cost>", formattedBalance(cost));
 
         player.sendMessage(str);
-        sellingStringForShopOwner(amount, itemAlias, owner, player, cost);
+        sellingStringForShopOwner(amount, item, owner, player, cost);
         moneyLeft(player);
     }
 

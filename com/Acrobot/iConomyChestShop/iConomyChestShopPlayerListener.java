@@ -17,12 +17,14 @@ import org.bukkit.event.player.PlayerListener;
 public class iConomyChestShopPlayerListener extends PlayerListener {
 
     private final iConomyChestShop plugin;
-
+    
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Block clickedBlock = event.getClickedBlock();
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+        Action action = event.getAction();
+        boolean sneakMode = ConfigManager.getBoolean("sneakMode");
+        if (action != Action.RIGHT_CLICK_BLOCK && (action != Action.LEFT_CLICK_BLOCK && sneakMode)) {
             return;
         }
         if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.admin")) {
@@ -58,18 +60,30 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
             player.sendMessage(ConfigManager.getLanguage("You_cannot_use_your_own_shop"));
             return;
         }
-        if (!plugin.enabled(player)) {
-            if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.buy")) {
-                player.sendMessage("[Permissions]" + ChatColor.RED.toString() + " You can't buy from shops!");
+        if (ConfigManager.getBoolean("sneakMode")) {
+            if (player.isSneaking()) {
                 return;
             }
-            ShopManager.buy(event);
-        } else {
-            if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.sell")) {
-                player.sendMessage("[Permissions]" + ChatColor.RED.toString() + " You can't sell to shops!");
-                return;
+            if (action == Action.LEFT_CLICK_BLOCK) {
+                ShopManager.sell(event);
+            } else {
+                ShopManager.buy(event);
             }
-            ShopManager.sell(event);
+            return;
+        } else if (action == Action.RIGHT_CLICK_BLOCK) {
+            if (!plugin.enabled(player)) {
+                if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.buy")) {
+                    player.sendMessage("[Permissions]" + ChatColor.RED.toString() + " You can't buy from shops!");
+                    return;
+                }
+                ShopManager.buy(event);
+            } else {
+                if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.sell")) {
+                    player.sendMessage("[Permissions]" + ChatColor.RED.toString() + " You can't sell to shops!");
+                    return;
+                }
+                ShopManager.sell(event);
+            }
         }
     }
 

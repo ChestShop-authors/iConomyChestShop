@@ -38,12 +38,9 @@ public class iConomyChestShop extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
         pm.registerEvent(Event.Type.BLOCK_BREAK, blockBreakListener, Priority.Normal, this);
-        //pm.registerEvent(Event.Type.BLOCK_RIGHTCLICKED, blockListener, Priority.Normal, this);
-        //pm.registerEvent(Event.Type.BLOCK_INTERACT, blockListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.SIGN_CHANGE, signManager, Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Highest, this);
-        //pm.registerEvent(Event.Type.INVENTORY_CLOSE, playerListener, Priority.Normal, this); disabled untill it's in bukkit
         
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println("[" + pdfFile.getName() + "]" + " version " + pdfFile.getVersion() + " initialized!");
@@ -64,7 +61,6 @@ public class iConomyChestShop extends JavaPlugin {
             player.sendMessage("[Shop] Selling to shops turned off in the config.");
         }
     }
-
     public void buyCommand(Player player) {
         if (enabled(player)) {
             sellUsers.remove(player);
@@ -73,7 +69,15 @@ public class iConomyChestShop extends JavaPlugin {
             player.sendMessage(ConfigManager.getLanguage("Mode_changed_to_buy"));
         }
     }
-
+    public void helpCommand(Player player){
+        player.sendMessage("ChestShop sign lines:");
+        boolean isAdmin = PermissionManager.hasPermissions(player, "iConomyChestShop.shop.admin");
+        player.sendMessage("1. blank" + (isAdmin ? "/other player name/admin shop" : ""));
+        player.sendMessage("2. amount of the item you want to sell");
+        player.sendMessage("3. price you sell:price you buy");
+        player.sendMessage("4. item id/name/alias");
+        player.sendMessage("If the buy or sell price is 0, people can't buy/sell there");
+    }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         String commandName = cmd.getName().toLowerCase();
@@ -89,7 +93,7 @@ public class iConomyChestShop extends JavaPlugin {
                 return true;
             }
             if(commandName.equals("chest")){
-                if(args[0] == null){
+                if(args.length != 1){
                     return false;
                 }
                 if(args[0].equals("buy")){
@@ -98,6 +102,10 @@ public class iConomyChestShop extends JavaPlugin {
                 }
                 if(args[0].equals("sell")){
                     sellCommand(player);
+                    return true;
+                }
+                if(args[0].equals("help")){
+                    helpCommand(player);
                     return true;
                 }
                 return false;

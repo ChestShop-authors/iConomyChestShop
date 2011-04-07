@@ -57,6 +57,9 @@ public class ProtectionManager {
     }
     
     public static boolean protectBlock(Block block, String name){
+        if(ConfigManager.getBoolean("LWCprotection") == false){
+            return false;
+        }
         if(lwc != null){
             lwc.getPhysicalDatabase().registerProtection(block.getTypeId(), ProtectionTypes.PRIVATE, block.getWorld().getName(), name, "", block.getX(), block.getY(), block.getZ());
             return true;
