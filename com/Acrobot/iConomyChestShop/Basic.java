@@ -129,6 +129,7 @@ public class Basic {
         }
     }
 
+    //Strips name to 15 chars - that's how many sign can hold
     public static String stripName(String name) {
         int length = name.length();
         if (length > 15) {
@@ -137,6 +138,7 @@ public class Basic {
         return name.substring(0, length);
     }
 
+    //What do I even have to say?
     public static int getItemAmountFromInventory(Inventory inv, ItemStack is) {
         int count = 0;
         ItemStack Items[] = inv.getContents();
@@ -151,6 +153,7 @@ public class Basic {
         return count;
     }
 
+    //Again...
     public static void removeItemStackFromInventory(Inventory inv, ItemStack is) {
         ItemStack[] Items = inv.getContents();
         int left = is.getAmount();
@@ -181,4 +184,10 @@ public class Basic {
 
         }
     }
+    
+    //Sends messages to players - future use
+    /*
+    public static void sendMessage(Player p, String message){
+        p.sendMessage(message);
+    }*/
 }

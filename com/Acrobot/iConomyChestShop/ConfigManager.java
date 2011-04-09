@@ -53,6 +53,9 @@ public class ConfigManager {
         player.sendMessage(str);
         moneyLeft(player);
         buyingStringForShopOwner(amount, item, owner, player, cost);
+        if(separateMessages()){
+            player.sendMessage(getSeparatingLine());
+        }
     }
 
     public static void buyingStringForShopOwner(int amount, String item, String owner, Player player, int cost) {
@@ -66,6 +69,9 @@ public class ConfigManager {
             return;
         }
         ownerPlayer.sendMessage(str);
+        if(separateMessages()){
+            ownerPlayer.sendMessage(getSeparatingLine());
+        }
     }
     
     public static void sellingStringForShopOwner(int amount, String item, String owner, Player player, int cost) {
@@ -79,6 +85,9 @@ public class ConfigManager {
             return;
         }
         ownerPlayer.sendMessage(str);
+        if(separateMessages()){
+            ownerPlayer.sendMessage(getSeparatingLine());
+        }
     }
 
     public static void sellingString(int amount, String item, String owner, Player player, int cost) {
@@ -91,6 +100,9 @@ public class ConfigManager {
         player.sendMessage(str);
         sellingStringForShopOwner(amount, item, owner, player, cost);
         moneyLeft(player);
+        if(separateMessages()){
+            player.sendMessage(getSeparatingLine());
+        }
     }
 
     public static String formattedBalance(double balance) {
@@ -103,6 +115,14 @@ public class ConfigManager {
         String msg = getLanguage("Your_balance");
         msg = msg.replace("<money>", formattedBalance(balance));
         player.sendMessage(msg);
+    }
+    
+    public static String getSeparatingLine(){
+        return "---------------------------";
+    }
+    
+    public static boolean separateMessages(){
+        return getBoolean("separatingLineAfterTransaction");
     }
     public static Configuration ChestShopConfig = new Configuration(new File("plugins/iConomyChestShop/config.yml"));
 }

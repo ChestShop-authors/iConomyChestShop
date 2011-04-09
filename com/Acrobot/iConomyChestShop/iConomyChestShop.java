@@ -51,8 +51,8 @@ public class iConomyChestShop extends JavaPlugin {
     }
     
     public void sellCommand(Player player) {
-        if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.sell")) {
-            player.sendMessage("[Permissions]" + ChatColor.RED.toString() + " You can't sell to shops!");
+        if(!iConomyChestShopPlayerListener.canSell(player)){
+            return;
         }
         if (ConfigManager.getBoolean("sell")) {
             sellUsers.put(player, null);

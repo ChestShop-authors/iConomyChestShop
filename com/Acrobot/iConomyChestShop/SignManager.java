@@ -89,7 +89,7 @@ public class SignManager extends BlockListener{
                             }
                         }
                     }
-                } else {
+                } else if(!text[0].toLowerCase().replace(" ", "").equals("adminshop")){
                     event.setCancelled(true);
                     event.getBlock().setType(Material.AIR);
                     p.sendMessage(ConfigManager.getLanguage("Shop_cannot_be_created"));
@@ -100,14 +100,20 @@ public class SignManager extends BlockListener{
                     event.getBlock().setType(Material.AIR);
                     return;
                 }
-                if (Basic.isInt(text[3])){
-                	Material signMat = Material.getMaterial(Integer.parseInt(text[3]));
-                	String alias = Basic.returnAlias(signMat.name());
-                    if(alias != null){
+                if (Basic.isInt(text[3])) {
+                    Material signMat = Material.getMaterial(Integer.parseInt(text[3]));
+                    if(signMat == null){
+                        event.setCancelled(true);
+                        event.getBlock().setType(Material.AIR);
+                        p.sendMessage(ConfigManager.getLanguage("incorrectID"));
+                        return;
+                    }
+                    String alias = Basic.returnAlias(signMat.name());
+                    if (alias != null) {
                         event.setLine(3, alias);
-                    }else if(signMat.name() != null){
+                    } else if (signMat.name() != null) {
                         event.setLine(3, signMat.name());
-                    }else {
+                    } else {
                         event.setCancelled(true);
                         event.getBlock().setType(Material.AIR);
                         p.sendMessage(ConfigManager.getLanguage("incorrectID"));

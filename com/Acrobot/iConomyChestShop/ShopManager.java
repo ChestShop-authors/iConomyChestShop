@@ -37,9 +37,6 @@ public class ShopManager extends PlayerListener {
         }
         int amount = Integer.parseInt(line[1]);
         Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
-        if(chestBlock.getTypeId() != 54){
-            return;
-        }
         String buyer = player.getName();
         String seller = line[0];
         if (!iConomyManager.hasEnough(buyer, price)) {
@@ -101,16 +98,6 @@ public class ShopManager extends PlayerListener {
             player.sendMessage(ConfigManager.getLanguage("No_selling_to_this_shop"));
             return;
         }
-        Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
-        if(chestBlock.getTypeId() != 54){
-            return;
-        }
-        Chest normalChest = (Chest) chestBlock.getState();
-        MinecartManiaChest chest = new MinecartManiaChest(normalChest);
-        if (ChestManager.firstEmpty(chest) == -1) {
-            player.sendMessage(ConfigManager.getLanguage("Chest_is_full"));
-            return;
-        }
         is.setAmount(amount);
         int amountOfIS = Basic.getItemAmountFromInventory(playerInv, is);
         if(amountOfIS < amount){
@@ -119,6 +106,13 @@ public class ShopManager extends PlayerListener {
         }
         if (line[0].toLowerCase().replace(" ", "").equals("adminshop")) {
             adminSell(event);
+            return;
+        }
+        Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
+        Chest normalChest = (Chest) chestBlock.getState();
+        MinecartManiaChest chest = new MinecartManiaChest(normalChest);
+        if (ChestManager.firstEmpty(chest) == -1) {
+            player.sendMessage(ConfigManager.getLanguage("Chest_is_full"));
             return;
         }
         if (!iConomyManager.hasEnough(shop, price)) {
