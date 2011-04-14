@@ -27,33 +27,35 @@ public class ProtectionManager {
     public static boolean isProtected(Block chest){
         if(lwc != null){
             Protection lwcProt = lwc.findProtection(chest);
-            if(lwcProt == null){
-                return false;
-            }else{
+            if(lwcProt != null){
                 return true;
             }
-        }else if(lockette != null){
-            boolean lockProt = Lockette.isProtected(chest);
-            return lockProt;
-        }else{
-            return false;
         }
+        if (lockette != null) {
+            boolean lockProt = Lockette.isProtected(chest);
+            if(lockProt){
+                return true;
+            }
+        }
+        return false;
+
     }
-    
-    public static String protectedByWho(Block chest){
+
+    public static String protectedByWho(Block chest) {
         if (chest == null) {
             return null;
         }
         String name = "";
-        if(lwc != null){
-            name = lwc.findProtection(chest).getOwner();
-        }else if(lockette != null){
+        if (lwc != null) {
+            Protection prot = lwc.findProtection(chest);
+            if(prot != null){
+                name = prot.getOwner();
+            }
+        }
+        if (lockette != null) {
             name = Lockette.getProtectedOwner(chest);
-        }else{
-            name = null;
         }
         return name;
-        
     }
     
     public static boolean protectBlock(Block block, String name){

@@ -10,7 +10,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
  * @author Acrobot
  */
 public class iConomyChestShopBlockListener extends BlockListener {
-    private final iConomyChestShop plugin;
     boolean debug = false;
     
     
@@ -27,6 +26,5 @@ public class iConomyChestShopBlockListener extends BlockListener {
     }
     
     public iConomyChestShopBlockListener(final iConomyChestShop plugin) {
-        this.plugin = plugin;
     }
 }

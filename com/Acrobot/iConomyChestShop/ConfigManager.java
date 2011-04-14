@@ -49,6 +49,7 @@ public class ConfigManager {
         str = str.replace("<amount>", amount + "");
         str = str.replace("<item>", item);
         str = str.replace("<owner>", owner);
+        str = str.replace("<cost>", formattedBalance(cost));
 
         player.sendMessage(str);
         moneyLeft(player);

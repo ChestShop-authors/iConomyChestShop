@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
@@ -121,16 +122,22 @@ public class iConomyChestShop extends JavaPlugin {
                     return true;
                 }
                 Material mat = null;
-
+                String dmgValue = "";
                 if (args.length == 0) {
-                    mat = player.getItemInHand().getType();
+                    ItemStack itemInHand = player.getItemInHand();
+                    mat = itemInHand.getType();
+                    int id = mat.getId();
+                    dmgValue = (id >= 256 && id <= 317 ? "" : ";" + itemInHand.getDurability());
                 } else if (args.length == 1) {
                     if (Basic.isInt(args[0])) {
                         mat = Material.getMaterial(Integer.parseInt(args[0]));
                     } else {
                         //mat = Basic.getMat(args[0]);
                         try {
-                            mat = Basic.getItemStack(args[0]).getType();
+                            ItemStack itemStack = Basic.getItemStack(args[0].replace(":", ";"));
+                            mat = itemStack.getType();
+                            int id = mat.getId();
+                            dmgValue = (id >= 256 && id <= 317 ? "" : ";" + itemStack.getDurability());
                         } catch (Exception ex) {
                             mat = Basic.getMat(args[0]);
                         }
@@ -142,11 +149,12 @@ public class iConomyChestShop extends JavaPlugin {
                 if (mat == null) {
                     return false;
                 }
-                String matName = "";
+                @SuppressWarnings("unused")
+		String matName = "";
                 String othernames = "";
                 if (Basic.OI != null) {
-                    Set<String> aliases = Basic.OI.getAliases(mat.getId() + "");
-                    Iterator iter = aliases.iterator();
+                    Set<String> aliases = Basic.OI.getAliases(mat.getId() + dmgValue.replace(":", ";"));
+                    Iterator<String> iter = aliases.iterator();
                     //int loops = 0;
                     while (iter.hasNext()) {
                         //loops++;
@@ -159,7 +167,7 @@ public class iConomyChestShop extends JavaPlugin {
                     matName = mat.getId() + "";
                 }
                 player.sendMessage(Basic.colorChat(ConfigManager.getLanguage("iteminfo")));
-                String msg = "&b" + mat.getId() + "&f - " + "&b" + mat.name() + othernames;
+                String msg = "&b" + mat.getId() + (!dmgValue.equals("") ? dmgValue.replace(";", ":") : "") + "&f - " + "&b" + mat.name() + othernames;
                 player.sendMessage(Basic.colorChat(msg));
                 return true;
                 

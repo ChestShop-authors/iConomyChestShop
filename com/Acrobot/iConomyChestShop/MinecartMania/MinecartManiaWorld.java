@@ -4,58 +4,53 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.entity.Entity;
 import org.bukkit.material.Button;
 import org.bukkit.material.Lever;
 import org.bukkit.material.MaterialData;
-import org.bukkit.Location;
 
 public class MinecartManiaWorld {
 	private static ConcurrentHashMap<Location,MinecartManiaChest> chests = new ConcurrentHashMap<Location,MinecartManiaChest>();
 	private static ConcurrentHashMap<String, Object> configuration = new ConcurrentHashMap<String,Object>();
 	
-	
-	 
-	 /**
+	/**
 	 ** Returns a new MinecartManiaChest from storage if it already exists, or creates and stores a new MinecartManiaChest object, and returns it
 	 ** @param the chest to wrap
 	 **/
 	 public static MinecartManiaChest getMinecartManiaChest(Chest chest) {
-        MinecartManiaChest testChest = chests.get(new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ()));
-        if (testChest == null) {
-	        MinecartManiaChest newChest = new MinecartManiaChest(chest);
-	        chests.put(new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ()), newChest);
-	        return newChest;
-        } 
-        else {
-        	//Verify that this block is still a chest (could have been changed)
-        	if (MinecartManiaWorld.getBlockIdAt(testChest.getWorld(), testChest.getX(), testChest.getY(), testChest.getZ()) == Item.CHEST.getId()) {
-        		testChest.updateInventory(testChest.getInventory());
-        		return testChest;
-        	}
-        	else {
-        		chests.remove(new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ()));
-        		return null;
-        	}
-        }
-    }
+		MinecartManiaChest testChest = chests.get(new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ()));
+		if (testChest == null) {
+			MinecartManiaChest newChest = new MinecartManiaChest(chest);
+			chests.put(new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ()), newChest);
+			return newChest;
+		} 
+		else {
+			//Verify that this block is still a chest (could have been changed)
+			if (MinecartManiaWorld.getBlockIdAt(testChest.getWorld(), testChest.getX(), testChest.getY(), testChest.getZ()) == Item.CHEST.getId()) {
+				testChest.updateInventory(testChest.getInventory());
+				return testChest;
+			}
+			else {
+				chests.remove(new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ()));
+				return null;
+			}
+		}
+	}
 	 
 	/**
 	 ** Returns true if the chest with the given location was deleted, false if not.
 	 ** @param the  location of the chest to delete
 	 **/
 	 public static boolean delMinecartManiaChest(Location v) {
-        if (chests.containsKey(v)) {
-            chests.remove(v);
-            return true;
-        }
-        return false;
-    }
+		if (chests.containsKey(v)) {
+			chests.remove(v);
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	* Returns an arraylist of all the MinecartManiaChests stored by this class
@@ -69,8 +64,6 @@ public class MinecartManiaWorld {
 		}
 		return chestList;
 	 }
-	 
-	 
 	 
 	/**
 	 ** Returns the value from the loaded configuration
@@ -184,14 +177,7 @@ public class MinecartManiaWorld {
 	 ** @param z coordinate
 	 **/	
 	public static int getBlockIdAt(World w, int x, int y, int z) {
-		try {
-			
-			return ((CraftWorld)w).getHandle().getTypeId(x, y, z);
-		}
-		catch (Exception e) {
-			return w.getBlockTypeIdAt(x, y, z);
-		}
-		
+		return w.getBlockTypeIdAt(x, y, z);
 	}
 	
 	/**
@@ -203,12 +189,7 @@ public class MinecartManiaWorld {
 	 ** @param z coordinate
 	 **/
 	public static void setBlockAt(World w, int type, int x, int y, int z) {
-		try {
-			((CraftWorld)w).getHandle().e(x, y, z, type);
-		}
-		catch (Exception e) {
-			w.getBlockAt(x, y, z).setTypeId(type);
-		}
+		w.getBlockAt(x, y, z).setTypeId(type);
 	}
 	
 	/**
@@ -219,12 +200,7 @@ public class MinecartManiaWorld {
 	 ** @param z coordinate
 	 **/
 	public static byte getBlockData(World w, int x, int y, int z) {
-		try {
-			return (byte) ((CraftWorld)w).getHandle().getData(x, y, z);
-		}
-		catch (Exception e) {
-			return w.getBlockAt(x, y, z).getData();
-		}
+		return w.getBlockAt(x, y, z).getData();
 	}
 	
 	/**
@@ -236,8 +212,6 @@ public class MinecartManiaWorld {
 	 ** @param new data to set
 	 **/
 	public static void setBlockData(World w, int x, int y, int z, int data) {
-		//Better to crash than to write bad data!
-		if (data < 0 || data > Byte.MAX_VALUE) throw new IllegalArgumentException();
 		w.getBlockAt(x, y, z).setData((byte) (data));
 	}
 	
@@ -304,18 +278,8 @@ public class MinecartManiaWorld {
 		setBlockPowered(w, x, y, z-1, power);
 		setBlockPowered(w, x, y, z+1, power);
 	}
+
 	
-	/**
-	 * @deprecated
-	 */
-	public static void kill(final Entity e) {
-		e.remove();
-	}
-	
-	public static boolean isDead(Entity e) {
-		CraftEntity ce = (CraftEntity)e;
-		return ce.getHandle().dead;
-	}
 }
 
 

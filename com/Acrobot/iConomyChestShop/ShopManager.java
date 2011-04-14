@@ -17,7 +17,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ShopManager extends PlayerListener {
 
-    public static void buy(PlayerInteractEvent event) {
+    
+	public static void buy(PlayerInteractEvent event) {
         Sign sign = (Sign) event.getClickedBlock().getState();
         int price = SignManager.buyPrice(sign);
         Player player = event.getPlayer();
@@ -30,12 +31,14 @@ public class ShopManager extends PlayerListener {
         if (is == null) {
             return;
         }
+        int amount = Integer.parseInt(line[1]);
         Inventory playerInv = player.getInventory();
-        if (playerInv.firstEmpty() == -1) {
+        
+        
+        if (!Basic.checkFreeSpace(playerInv, is)) {
             player.sendMessage(ConfigManager.getLanguage("Your_inventory_is_full"));
             return;
         }
-        int amount = Integer.parseInt(line[1]);
         Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
         String buyer = player.getName();
         String seller = line[0];
@@ -50,6 +53,7 @@ public class ShopManager extends PlayerListener {
         Chest normalChest = (Chest) chestBlock.getState();
         MinecartManiaChest chest = new MinecartManiaChest(normalChest);
         is.setAmount(amount);
+        
         int itemInChestAmount = ChestManager.getItemAmount(chest, is);
         
         if (itemInChestAmount < amount) {
@@ -64,9 +68,9 @@ public class ShopManager extends PlayerListener {
             return;
         }
         
-        
-        player.getInventory().addItem(is);
-        ChestManager.removeItems(chest, is);
+        Basic.addItemToInventory(playerInv, is); 
+        //player.getInventory().addItem(is);
+        ChestManager.removeItems(chest, is, amount);
         
         player.updateInventory(); // Do not use this unless really needed, like now
         
@@ -111,7 +115,7 @@ public class ShopManager extends PlayerListener {
         Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
         Chest normalChest = (Chest) chestBlock.getState();
         MinecartManiaChest chest = new MinecartManiaChest(normalChest);
-        if (ChestManager.firstEmpty(chest) == -1) {
+        if (!ChestManager.hasFreeSpace(chest, is)) {
             player.sendMessage(ConfigManager.getLanguage("Chest_is_full"));
             return;
         }
@@ -160,7 +164,8 @@ public class ShopManager extends PlayerListener {
         ConfigManager.sellingString(amount, line[3], "admin shop", player, price);
     }
 
-    public static void adminBuy(PlayerInteractEvent event) {
+    
+	public static void adminBuy(PlayerInteractEvent event) {
         Sign sign = (Sign) event.getClickedBlock().getState();
         int price = SignManager.buyPrice(sign);
         Player player = event.getPlayer();
@@ -172,7 +177,8 @@ public class ShopManager extends PlayerListener {
         int amount = Integer.parseInt(line[1]);
         is.setAmount(amount);
         String buyer = player.getName();
-        player.getInventory().addItem(is);
+        Basic.addItemToInventory(player.getInventory(), is); 
+        //player.getInventory().addItem(is);
         
         player.updateInventory(); // Do not use this unless really needed, like now
         

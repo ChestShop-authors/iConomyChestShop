@@ -3,6 +3,7 @@ package com.Acrobot.iConomyChestShop;
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaDoubleChest;
 import org.bukkit.Material;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -19,11 +20,34 @@ public class ChestManager{
         return doublechest;
     }
     
+    public static MinecartManiaChest returnChest(MinecartManiaChest chest){
+        return chest.getNeighborChest();
+    }
+    
     public static ItemStack[] getContents(MinecartManiaChest chest) {
         if (isDoubleChest(chest)) {
             return returnDoubleChest(chest).getContents();
         } else {
             return chest.getContents();
+        }
+    }
+    
+    public static boolean hasFreeSpace(MinecartManiaChest chest, ItemStack is){
+        if(isDoubleChest(chest)){
+            Inventory chest1 = chest.getInventory();
+            Inventory chest2 = returnChest(chest).getInventory();
+
+            if (Basic.checkFreeSpace(chest1, is) || Basic.checkFreeSpace(chest2, is)) {
+                return true;
+            } else {
+                return false;
+            }
+        }else{
+            if(Basic.checkFreeSpace(chest.getInventory(), is)){
+                return true;
+            }else{
+                return false;
+            }
         }
     }
 
@@ -116,11 +140,11 @@ public class ChestManager{
         }
     }
     
-    public static void removeItems(MinecartManiaChest chest, ItemStack item){
+    public static void removeItems(MinecartManiaChest chest, ItemStack item, int left){
         if (isDoubleChest(chest)) {
             MinecartManiaDoubleChest doublechest = returnDoubleChest(chest);
             ItemStack[] Items = doublechest.getContents();
-            int left = item.getAmount();
+            //int left = item.getAmount();
             for(int i = 0; i < doublechest.size(); i++){
                 if(left <= 0){
                     return;
@@ -148,7 +172,7 @@ public class ChestManager{
             }
         } else {
             ItemStack[] Items = chest.getContents();
-            int left = item.getAmount();
+            //int left = item.getAmount();
             for(int i = 0; i < chest.size(); i++){
                 if(left <= 0){
                     return;

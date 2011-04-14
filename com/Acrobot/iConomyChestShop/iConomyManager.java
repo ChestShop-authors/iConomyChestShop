@@ -19,7 +19,7 @@ public class iConomyManager {
     public static boolean setiConomy(iConomy plugin) {
         if (iConomy == null) {
             iConomy = plugin;
-            bank = iConomy.getBank();
+            bank = com.nijiko.coelho.iConomy.iConomy.getBank();
         } else {
             return false;
         }

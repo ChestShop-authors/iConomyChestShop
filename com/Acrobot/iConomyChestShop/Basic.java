@@ -2,6 +2,7 @@ package com.Acrobot.iConomyChestShop;
 
 import info.somethingodd.bukkit.OddItem.OddItem;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import org.bukkit.Material;
@@ -100,7 +101,7 @@ public class Basic {
             return null;
         }
         Set<String> aliases = Basic.OI.getAliases(name);
-        Iterator iter = aliases.iterator();
+        Iterator<String> iter = aliases.iterator();
         String alias = null;
         if (iter.hasNext()) {
             alias = (String) iter.next();
@@ -140,13 +141,22 @@ public class Basic {
 
     //What do I even have to say?
     public static int getItemAmountFromInventory(Inventory inv, ItemStack is) {
+        int id = is.getTypeId();
+        boolean checkDurability = true;
+        if(ConfigManager.getBoolean("allowUsedItemsToBeSold") && id >= 256 && id <= 317){
+            checkDurability = false;
+        }
         int count = 0;
         ItemStack Items[] = inv.getContents();
         for (int i = 0; i < Items.length; i++) {
             if (Items[i] == null) {
                 continue;
             }
-            if (Items[i].getType() == is.getType() && (Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1)) {
+            if(checkDurability){
+                if (Items[i].getType() == is.getType() && (Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1)) {
+                    count += Items[i].getAmount();
+                }
+            }else{
                 count += Items[i].getAmount();
             }
         }
@@ -157,6 +167,11 @@ public class Basic {
     public static void removeItemStackFromInventory(Inventory inv, ItemStack is) {
         ItemStack[] Items = inv.getContents();
         int left = is.getAmount();
+        boolean checkDurability = true;
+        int id = is.getTypeId();
+        if(ConfigManager.getBoolean("allowUsedItemsToBeSold") && id >= 256 && id <= 317){
+            checkDurability = false;
+        }
         for (int i = 0; i < Items.length; i++) {
             if (left <= 0) {
                 return;
@@ -165,7 +180,7 @@ public class Basic {
             if (curItem == null) {
                 continue;
             }
-            if (curItem.getType() == is.getType() && (curItem.getDurability() == is.getDurability() || curItem.getDurability() == -1)) {
+            if (curItem.getType() == is.getType() && ((curItem.getDurability() == is.getDurability() || curItem.getDurability() == -1)) || !checkDurability) {
                 if (curItem.getAmount() > left) {
                     curItem.setAmount(curItem.getAmount() - left);
                     left -= curItem.getAmount();
@@ -182,6 +197,68 @@ public class Basic {
                 inv.setItem(i, null);
             }
 
+        }
+    }
+    
+    public static void addItemToInventory(Inventory inv, ItemStack is){
+        int left = is.getAmount();
+        int maxStackSize = is.getType().getMaxStackSize();
+        if(left <= maxStackSize){
+            inv.addItem(is);
+            return;
+        }
+        if(maxStackSize != 64){
+            ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+            for (int i = 0; i < Math.ceil(left / maxStackSize); i++) {
+                if (left < maxStackSize) {
+                    ItemStack tmp = is;
+                    tmp.setAmount(left);
+                    items.add(tmp);
+                    return;
+                }else{
+                    ItemStack tmp = is;
+                    tmp.setAmount(maxStackSize);
+                    items.add(tmp);
+                }
+            }
+            Object[] iArray = items.toArray();
+            for(Object o : iArray){
+                inv.addItem((ItemStack) o);
+            }
+        }else{
+            inv.addItem(is);
+        }
+    }
+    
+    //Checks if there is enough free space in inventory
+    public static boolean checkFreeSpace(Inventory inv, ItemStack is){
+        int left = is.getAmount();
+        ItemStack[] contents = inv.getContents();
+        Material type = is.getType();
+        short durability = is.getDurability();
+        int maxStack = is.getType().getMaxStackSize();
+        for(int i=0; i < inv.getSize(); i++){
+            if(left <= 0){
+                return true;
+            }
+            ItemStack curitem = contents[i];
+            if(curitem == null){
+                left = left - maxStack;
+                continue;
+            }
+            if(!curitem.getType().equals(type) || curitem.getDurability() != durability){
+                continue;
+            }
+            int amount = curitem.getAmount();
+            int maxStackSize = curitem.getMaxStackSize();
+            if(amount < maxStackSize){
+                left = left - (maxStackSize - amount);
+            }
+        }
+        if(left <= 0){
+            return true;
+        }else{
+            return false;
         }
     }
     

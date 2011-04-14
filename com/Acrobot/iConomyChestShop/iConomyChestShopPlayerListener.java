@@ -77,6 +77,7 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
             }
             ShopManager.sell(event);
         } else if (action == Action.RIGHT_CLICK_BLOCK) {
+            event.setCancelled(true);
             if (!plugin.enabled(player)) {
                 if(!canBuy(player)){
                     return;

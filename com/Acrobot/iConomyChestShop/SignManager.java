@@ -1,7 +1,6 @@
 package com.Acrobot.iConomyChestShop;
 
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
-import java.util.logging.Level;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -12,6 +11,7 @@ import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Manages signs
@@ -23,13 +23,10 @@ public class SignManager extends BlockListener{
     public void onSignChange(SignChangeEvent event) {
         Player p = event.getPlayer();
         Block block = event.getBlock();
-        Sign sign = null;
         Material type = block.getType();
         boolean isAdmin = PermissionManager.hasPermissions(p, "iConomyChestShop.shop.admin");
         
-        if (type.equals(Material.SIGN) || type.equals(Material.SIGN_POST) || type.equals(Material.WALL_SIGN)) {
-            sign = (Sign) block.getState();
-        } else {
+        if (!(type.equals(Material.SIGN) || type.equals(Material.SIGN_POST) || type.equals(Material.WALL_SIGN))) {
             return;
         }
         if (!Basic.checkConfig(p)) {
@@ -65,14 +62,16 @@ public class SignManager extends BlockListener{
                 if (!(!text[0].equals("") && isAdmin)) {
                     event.setLine(0, p.getName());
                 }
-                
+
                 if (chest != null) {
                     if (ProtectionManager.isProtected(ChestB) && !isAdmin) {
-                        if (!ProtectionManager.protectedByWho(ChestB).equals(Basic.stripName(p.getName()))) {
-                            p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
-                            event.setCancelled(true);
-                            event.getBlock().setType(Material.AIR);
-                            return;
+                        if (ProtectionManager.protectedByWho(ChestB) != null) {
+                            if (!ProtectionManager.protectedByWho(ChestB).equals(Basic.stripName(p.getName()))) {
+                                p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
+                                event.setCancelled(true);
+                                event.getBlock().setType(Material.AIR);
+                                return;
+                            }
                         }
                     }
                     MinecartManiaChest mmc = new MinecartManiaChest((Chest) chest);
@@ -92,12 +91,14 @@ public class SignManager extends BlockListener{
                 } else if(!text[0].toLowerCase().replace(" ", "").equals("adminshop")){
                     event.setCancelled(true);
                     event.getBlock().setType(Material.AIR);
+                    //event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.SIGN));
                     p.sendMessage(ConfigManager.getLanguage("Shop_cannot_be_created"));
                     return;
                 }
-                if ((text[2].length() > 11 && !isFormated) || text[1].length() > 15 || text[3].length() > 15) {
+                if ((text[2].length() > 11 && !isFormated) || text[1].length() > 15) {
                     event.setCancelled(true);
                     event.getBlock().setType(Material.AIR);
+                    p.sendMessage(ConfigManager.getLanguage("Couldnt_fit_on_sign"));
                     return;
                 }
                 if (Basic.isInt(text[3])) {
@@ -119,8 +120,8 @@ public class SignManager extends BlockListener{
                         p.sendMessage(ConfigManager.getLanguage("incorrectID"));
                         return;
                     }
-                }else if(text[3].contains(";")){
-                    String alias = Basic.returnAlias(text[3]);
+                }else if(text[3].contains(";") || text[3].contains(":")){
+                    String alias = Basic.returnAlias(text[3].replace(":", ";"));
                     if (alias != null) {
                         event.setLine(3, alias);
                     }
@@ -155,7 +156,7 @@ public class SignManager extends BlockListener{
             try {
                 String text[] = sign.getLines();
                 String bs[] = text[2].split(":");
-                if (Basic.isInt(bs[0].substring(2)) && Basic.isInt(bs[1].substring(0, bs[1].length() - 2)) && text[0].length() > 1) {
+                if (bs[0].substring(0, 1).equals("B") && bs[1].substring(bs[1].length() - 1, bs[1].length()).equals("S") && Basic.isInt(bs[0].substring(2)) && Basic.isInt(bs[1].substring(0, bs[1].length() - 2)) && text[0].length() > 1) {
                     return true;
                 }
                 return false;
