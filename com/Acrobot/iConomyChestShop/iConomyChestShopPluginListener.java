@@ -3,6 +3,7 @@ package com.Acrobot.iConomyChestShop;
 import com.griefcraft.lwc.LWCPlugin;
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import cosine.boseconomy.BOSEconomy;
 import info.somethingodd.bukkit.OddItem.OddItem;
 
 import org.bukkit.event.server.PluginEnableEvent;
@@ -78,6 +79,15 @@ public class iConomyChestShopPluginListener extends ServerListener{
                 System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
             }
         }
-
+        
+        //BOSEconomy
+        if (iConomyManager.BOSEconomy == null) {
+            Plugin tmp = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("BOSEconomy");
+            if (tmp != null) {
+                iConomyManager.BOSEconomy = (BOSEconomy) tmp;
+                PluginDescriptionFile pDesc = tmp.getDescription();
+                System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
+            }
+        }
     }
 }

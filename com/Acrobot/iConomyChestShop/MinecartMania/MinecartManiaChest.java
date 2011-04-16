@@ -1,6 +1,7 @@
 package com.Acrobot.iConomyChestShop.MinecartMania;
 
 import com.Acrobot.iConomyChestShop.Basic;
+import com.Acrobot.iConomyChestShop.ConfigManager;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -142,7 +143,11 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
         //Attempt to add the item to an empty slot
         int emptySlot = firstEmpty();
         if (emptySlot > -1) {
-            Basic.addItemToInventory(getInventory(), item);
+            if(ConfigManager.getBoolean("stackUnstackableItems")){
+                setItem(emptySlot, item);
+            }else{
+                Basic.addItemToInventory(getInventory(), item);
+            }
             //setItem(emptySlot, item);
             update();
             return true;

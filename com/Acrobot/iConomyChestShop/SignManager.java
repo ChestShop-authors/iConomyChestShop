@@ -11,7 +11,6 @@ import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Manages signs

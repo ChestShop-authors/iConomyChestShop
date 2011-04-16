@@ -45,9 +45,9 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         }
         Sign sign = (Sign) event.getClickedBlock().getState();
         String name = sign.getLine(0);
-        if (iConomyManager.getiConomy() == null) {
-            System.out.println("[iConomyChestShop] No iConomy found!");
-            player.sendMessage("[iConomyChestShop] No iConomy found!");
+        if (iConomyManager.getiConomy() == null && iConomyManager.BOSEconomy == null) {
+            System.out.println("[iConomyChestShop] No economy plugin found!");
+            player.sendMessage("[iConomyChestShop] No economy plugin found!");
             return;
         }
         if (!Basic.checkConfig(player)) {
@@ -60,9 +60,11 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         if (!SignManager.mySign(sign)) {
             return;
         }
-        if (iConomyManager.bank.getAccount(name) == null && !name.toLowerCase().replace(" ", "").equals("adminshop")) {
-            player.sendMessage(ConfigManager.getLanguage("Seller_has_no_account"));
-            return;
+        if (!name.toLowerCase().replace(" ", "").equals("adminshop")) {
+            if (!iConomyManager.hasAccount(name)) {
+                player.sendMessage(ConfigManager.getLanguage("Seller_has_no_account"));
+                return;
+            }
         }
         if (sign.getLine(0).equals(player.getName())) {
             player.sendMessage(ConfigManager.getLanguage("You_cannot_use_your_own_shop"));
