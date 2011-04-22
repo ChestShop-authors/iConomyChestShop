@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -149,11 +151,12 @@ public class Basic {
         int count = 0;
         ItemStack Items[] = inv.getContents();
         for (int i = 0; i < Items.length; i++) {
+            
             if (Items[i] == null) {
                 continue;
             }
             if(checkDurability){
-                if (Items[i].getType() == is.getType() && (Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1)) {
+                if (Items[i].getType() == is.getType() && (Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1) && Items[i].getAmount() > 0) {
                     count += Items[i].getAmount();
                 }
             }else{
@@ -200,6 +203,7 @@ public class Basic {
         }
     }
     
+    //Adds item to inventory
     public static void addItemToInventory(Inventory inv, ItemStack is){
         int left = is.getAmount();
         int maxStackSize = is.getType().getMaxStackSize();
@@ -267,4 +271,11 @@ public class Basic {
     public static void sendMessage(Player p, String message){
         p.sendMessage(message);
     }*/
+    
+    public static void cancelEventAndDropSign(SignChangeEvent event){
+        event.setCancelled(true);
+        Block block = event.getBlock();
+        block.setType(Material.AIR);
+        block.getWorld().dropItem(block.getLocation(), new ItemStack(Material.SIGN));
+    }
 }

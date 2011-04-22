@@ -34,7 +34,7 @@ public class ShopManager extends PlayerListener {
         int amount = Integer.parseInt(line[1]);
         Inventory playerInv = player.getInventory();
         
-        
+        is.setAmount(amount);
         if (!Basic.checkFreeSpace(playerInv, is)) {
             player.sendMessage(ConfigManager.getLanguage("Your_inventory_is_full"));
             return;
@@ -52,7 +52,7 @@ public class ShopManager extends PlayerListener {
         }
         Chest normalChest = (Chest) chestBlock.getState();
         MinecartManiaChest chest = new MinecartManiaChest(normalChest);
-        is.setAmount(amount);
+        
         
         int itemInChestAmount = ChestManager.getItemAmount(chest, is);
         

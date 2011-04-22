@@ -32,7 +32,7 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         Block clickedBlock = event.getClickedBlock();
         Action action = event.getAction();
         boolean sneakMode = ConfigManager.getBoolean("sneakMode");
-        if ((action != Action.RIGHT_CLICK_BLOCK && action != Action.LEFT_CLICK_BLOCK) || action == Action.LEFT_CLICK_BLOCK && !sneakMode) {
+        if ((action != Action.RIGHT_CLICK_BLOCK && action != Action.LEFT_CLICK_BLOCK) || (action == Action.LEFT_CLICK_BLOCK && !sneakMode)) {
             return;
         }
         if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.admin")) {
@@ -68,6 +68,9 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         }
         if (sign.getLine(0).equals(player.getName())) {
             player.sendMessage(ConfigManager.getLanguage("You_cannot_use_your_own_shop"));
+            return;
+        }
+        if(Integer.parseInt(sign.getLine(1)) < 1){
             return;
         }
         if (ConfigManager.getBoolean("sneakMode") && action == Action.LEFT_CLICK_BLOCK) {
