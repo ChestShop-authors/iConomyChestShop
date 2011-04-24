@@ -61,8 +61,14 @@ public class SignManager extends BlockListener{
                         p.setItemInHand(null);
                     }
                 }
+                if(Integer.parseInt(split[0]) < 1 || Integer.parseInt(split[1]) < 1){
+                    Basic.cancelEventAndDropSign(event);
+                    p.sendMessage(ConfigManager.getLanguage("Negative_price"));
+                    return;
+                }
                 if (Integer.parseInt(text[1]) < 1) {
                     Basic.cancelEventAndDropSign(event);
+                    p.sendMessage(ConfigManager.getLanguage("Incorrect_item_amount"));
                     return;
                 }
                 if(Basic.OI == null){
@@ -74,8 +80,9 @@ public class SignManager extends BlockListener{
                     p.sendMessage(ConfigManager.getLanguage("incorrectID"));
                     return;
                 }
-                if (!PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create") && !PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create." + itemStack.getTypeId())) {
-                    p.sendMessage("[Permissions] You can't make shops!");
+                //if (!PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create") && !PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create." + itemStack.getTypeId())) {
+                if (!isAdmin && (PermissionManager.hasPermissions(p,"iConomyChestShop.shop.exclude."+itemStack.getTypeId()) || (!PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create") && !PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create." + itemStack.getTypeId())))) {
+                    p.sendMessage("[Permissions] You can't make this type of shop!");
                     Basic.cancelEventAndDropSign(event);
                     return;
                 }
