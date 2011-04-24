@@ -27,7 +27,7 @@ public class ShopManager extends PlayerListener {
             return;
         }
         String[] line = sign.getLines();
-        ItemStack is = Basic.getItemStack(line[3]);
+        ItemStack is = Basic.getItemStack(line[3].replace(":", ";"));
         if (is == null) {
             return;
         }
@@ -87,7 +87,7 @@ public class ShopManager extends PlayerListener {
     public static void sell(PlayerInteractEvent event) {
         Sign sign = (Sign) event.getClickedBlock().getState();
         String[] line = sign.getLines();
-        ItemStack is = Basic.getItemStack(line[3]);
+        ItemStack is = Basic.getItemStack(line[3].replace(":", ";"));
         Player player = event.getPlayer();
         Inventory playerInv = player.getInventory();
         int price = SignManager.sellPrice(sign);
@@ -144,7 +144,7 @@ public class ShopManager extends PlayerListener {
     public static void adminSell(PlayerInteractEvent event) {
         Sign sign = (Sign) event.getClickedBlock().getState();
         String[] line = sign.getLines();
-        ItemStack is = Basic.getItemStack(line[3]);
+        ItemStack is = Basic.getItemStack(line[3].replace(":", ";"));
         Player player = event.getPlayer();
         Inventory playerInv = player.getInventory();
         int price = SignManager.sellPrice(sign);
@@ -170,7 +170,7 @@ public class ShopManager extends PlayerListener {
         int price = SignManager.buyPrice(sign);
         Player player = event.getPlayer();
         String[] line = sign.getLines();
-        ItemStack is = Basic.getItemStack(line[3]);
+        ItemStack is = Basic.getItemStack(line[3].replace(":", ";"));
         if (is == null) {
             return;
         }

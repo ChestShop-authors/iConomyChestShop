@@ -81,20 +81,27 @@ public class Basic {
 
     //Returns ItemStack - in case OddItem is enabled
     public static ItemStack getItemStack(String name) {
-        Material mat = getMat(name);
+        int dataPosition = name.indexOf(';');
+        dataPosition = (dataPosition != -1 ? dataPosition : -1);
+        int dataValue = (isInt(name.substring(dataPosition + 1)) ? Integer.parseInt(name.substring(dataPosition + 1)) : 0);
+        dataValue = (dataValue > 30 ? 0 : dataValue);
+        Material mat;
+        if(dataPosition != -1){
+            mat = getMat(name.substring(0,dataPosition));
+        }else{
+            mat = getMat(name);
+        }
         if (OI != null) {
             try {
                 return OI.getItemStack(name);
-            } catch (IllegalArgumentException e) {
-                if (mat != null) {
-                    return new ItemStack(mat);
-                }
+            } catch (Exception e) {
             }
         }
-        if (mat == null) {
+        if (mat != null && mat != Material.AIR) {
+            return new ItemStack(mat, 0, (short) dataValue);
+        }else{
             return null;
         }
-        return new ItemStack(mat);
     }
 
     //Returns Alias of the Item - in case OddItem is enabled
