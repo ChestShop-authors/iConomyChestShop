@@ -61,7 +61,36 @@ public class SignManager extends BlockListener{
                         p.setItemInHand(null);
                     }
                 }
-                if(Integer.parseInt(split[0]) < 1 || Integer.parseInt(split[1]) < 1){
+                if (chest != null) {
+                    if (ProtectionManager.isProtected(ChestB) && !isAdmin) {
+                        if (ProtectionManager.protectedByWho(ChestB) != null) {
+                            if (!ProtectionManager.protectedByWho(ChestB).equals(Basic.stripName(p.getName()))) {
+                                p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
+                                Basic.cancelEventAndDropSign(event);
+                                return;
+                            }
+                        }
+                    }
+                    MinecartManiaChest mmc = new MinecartManiaChest((Chest) chest);
+                    MinecartManiaChest neighbor = mmc.getNeighborChest();
+                    if(neighbor != null)
+                    {
+                        CraftSign sig = ProtectionManager.getSign(mmc.getNeighborChest().getChest().getBlock(), true);
+                        if(sig != null){
+                            if (!sig.getLine(0).equals(p.getName()) && !isAdmin) {
+                                p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
+                                Basic.cancelEventAndDropSign(event);
+                                return;
+                            }
+                        }
+                    }
+                } else if(!text[0].toLowerCase().replace(" ", "").equals("adminshop")){
+                    Basic.cancelEventAndDropSign(event);
+                    p.sendMessage(ConfigManager.getLanguage("Shop_cannot_be_created"));
+                    return;
+                }
+                
+                if(Integer.parseInt(split[0]) < 0 || Integer.parseInt(split[1]) < 0){
                     Basic.cancelEventAndDropSign(event);
                     p.sendMessage(ConfigManager.getLanguage("Negative_price"));
                     return;
@@ -70,9 +99,6 @@ public class SignManager extends BlockListener{
                     Basic.cancelEventAndDropSign(event);
                     p.sendMessage(ConfigManager.getLanguage("Incorrect_item_amount"));
                     return;
-                }
-                if(Basic.OI == null){
-                    Logging.log("OddItem is not available, item aliases and colored wool/dyes/wood won't work.");
                 }
                 ItemStack itemStack = Basic.getItemStack(text[3].replace(":", ";"));
                 if (itemStack == null) {
@@ -113,34 +139,7 @@ public class SignManager extends BlockListener{
                 if (!(!text[0].equals("") && isAdmin)) {
                     event.setLine(0, p.getName());
                 }
-                if (chest != null) {
-                    if (ProtectionManager.isProtected(ChestB) && !isAdmin) {
-                        if (ProtectionManager.protectedByWho(ChestB) != null) {
-                            if (!ProtectionManager.protectedByWho(ChestB).equals(Basic.stripName(p.getName()))) {
-                                p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
-                                Basic.cancelEventAndDropSign(event);
-                                return;
-                            }
-                        }
-                    }
-                    MinecartManiaChest mmc = new MinecartManiaChest((Chest) chest);
-                    MinecartManiaChest neighbor = mmc.getNeighborChest();
-                    if(neighbor != null)
-                    {
-                        CraftSign sig = ProtectionManager.getSign(mmc.getNeighborChest().getChest().getBlock(), true);
-                        if(sig != null){
-                            if (!sig.getLine(0).equals(p.getName()) && !isAdmin) {
-                                p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
-                                Basic.cancelEventAndDropSign(event);
-                                return;
-                            }
-                        }
-                    }
-                } else if(!text[0].toLowerCase().replace(" ", "").equals("adminshop")){
-                    Basic.cancelEventAndDropSign(event);
-                    p.sendMessage(ConfigManager.getLanguage("Shop_cannot_be_created"));
-                    return;
-                }
+                
                 if ((text[2].length() > 11 && !isFormated) || text[1].length() > 15) {
                     Basic.cancelEventAndDropSign(event);
                     p.sendMessage(ConfigManager.getLanguage("Couldnt_fit_on_sign"));

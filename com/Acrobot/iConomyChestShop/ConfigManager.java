@@ -1,6 +1,8 @@
 package com.Acrobot.iConomyChestShop;
 
 import java.io.File;
+
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
@@ -119,7 +121,7 @@ public class ConfigManager {
     }
     
     public static String getSeparatingLine(){
-        return "---------------------------";
+        return ChatColor.RED + "---------------------------------";
     }
     
     public static boolean separateMessages(){

@@ -84,7 +84,7 @@ public class Basic {
         int dataPosition = name.indexOf(';');
         dataPosition = (dataPosition != -1 ? dataPosition : -1);
         int dataValue = (isInt(name.substring(dataPosition + 1)) ? Integer.parseInt(name.substring(dataPosition + 1)) : 0);
-        dataValue = (dataValue > 30 ? 0 : dataValue);
+        dataValue = (dataValue > 30 || dataValue < 0 ? 0 : dataValue);
         Material mat;
         if(dataPosition != -1){
             mat = getMat(name.substring(0,dataPosition));
@@ -158,15 +158,10 @@ public class Basic {
         int count = 0;
         ItemStack Items[] = inv.getContents();
         for (int i = 0; i < Items.length; i++) {
-            
             if (Items[i] == null) {
                 continue;
             }
-            if(checkDurability){
-                if (Items[i].getType() == is.getType() && (Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1) && Items[i].getAmount() > 0) {
-                    count += Items[i].getAmount();
-                }
-            }else{
+            if (Items[i].getType() == is.getType() && ((Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1) || !checkDurability) && Items[i].getAmount() > 0) {
                 count += Items[i].getAmount();
             }
         }
@@ -190,7 +185,7 @@ public class Basic {
             if (curItem == null) {
                 continue;
             }
-            if (curItem.getType() == is.getType() && ((curItem.getDurability() == is.getDurability() || curItem.getDurability() == -1)) || !checkDurability) {
+            if (curItem.getType() == is.getType() && ((curItem.getDurability() == is.getDurability() || curItem.getDurability() == -1) || !checkDurability)) {
                 if (curItem.getAmount() > left) {
                     curItem.setAmount(curItem.getAmount() - left);
                     left -= curItem.getAmount();

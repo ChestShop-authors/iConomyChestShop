@@ -94,7 +94,6 @@ public class ShopManager extends PlayerListener {
         int amount = Integer.parseInt(line[1]);
         String seller = player.getName();
         String shop = line[0];
-        
         if (is == null) {
             return;
         }
@@ -123,8 +122,6 @@ public class ShopManager extends PlayerListener {
             player.sendMessage(ConfigManager.getLanguage("Seller_has_not_enough_money"));
             return;
         }
-        
-        
         
         ChestManager.addItem(chest, is);
         //playerInv.remove(is);
