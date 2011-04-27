@@ -32,18 +32,18 @@ public class ChestManager{
         }
     }
     
-    public static boolean hasFreeSpace(MinecartManiaChest chest, ItemStack is){
+    public static boolean hasFreeSpace(MinecartManiaChest chest, ItemStack is, int amount){
         if(isDoubleChest(chest)){
             Inventory chest1 = chest.getInventory();
             Inventory chest2 = returnChest(chest).getInventory();
 
-            if (Basic.checkFreeSpace(chest1, is) || Basic.checkFreeSpace(chest2, is)) {
+            if (Basic.checkFreeSpace(chest1, is, amount) || Basic.checkFreeSpace(chest2, is, amount)) {
                 return true;
             } else {
                 return false;
             }
         }else{
-            if(Basic.checkFreeSpace(chest.getInventory(), is)){
+            if(Basic.checkFreeSpace(chest.getInventory(), is, amount)){
                 return true;
             }else{
                 return false;

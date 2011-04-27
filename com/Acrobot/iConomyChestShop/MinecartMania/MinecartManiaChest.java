@@ -142,11 +142,12 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
 
         //Attempt to add the item to an empty slot
         int emptySlot = firstEmpty();
+        int amount = item.getAmount();
         if (emptySlot > -1) {
             if(ConfigManager.getBoolean("stackUnstackableItems")){
                 setItem(emptySlot, item);
             }else{
-                Basic.addItemToInventory(getInventory(), item);
+                Basic.addItemToInventory(getInventory(), item, amount);
             }
             //setItem(emptySlot, item);
             update();

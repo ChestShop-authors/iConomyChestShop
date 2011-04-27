@@ -35,7 +35,7 @@ public class ShopManager extends PlayerListener {
         Inventory playerInv = player.getInventory();
         
         is.setAmount(amount);
-        if (!Basic.checkFreeSpace(playerInv, is)) {
+        if (!Basic.checkFreeSpace(playerInv, is, amount)) {
             player.sendMessage(ConfigManager.getLanguage("Your_inventory_is_full"));
             return;
         }
@@ -68,7 +68,7 @@ public class ShopManager extends PlayerListener {
             return;
         }
         
-        Basic.addItemToInventory(playerInv, is); 
+        Basic.addItemToInventory(playerInv, is, amount); 
         //player.getInventory().addItem(is);
         ChestManager.removeItems(chest, is, amount);
         
@@ -77,7 +77,7 @@ public class ShopManager extends PlayerListener {
         iConomyManager.substract(buyer, price);
         iConomyManager.add(seller, price);
         
-        Logging.log(buyer + " bought " + is.getType() + " with durability of " 
+        Logging.log(buyer + " bought " + amount + " " + is.getType() + " with durability of " 
                 + is.getDurability() + " from " + seller + " for " + price + " " 
                 + iConomyManager.getCurrency());
         ConfigManager.buyingString(amount, line[3], seller, player, price);
@@ -114,7 +114,7 @@ public class ShopManager extends PlayerListener {
         Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
         Chest normalChest = (Chest) chestBlock.getState();
         MinecartManiaChest chest = new MinecartManiaChest(normalChest);
-        if (!ChestManager.hasFreeSpace(chest, is)) {
+        if (!ChestManager.hasFreeSpace(chest, is, amount)) {
             player.sendMessage(ConfigManager.getLanguage("Chest_is_full"));
             return;
         }
@@ -125,14 +125,14 @@ public class ShopManager extends PlayerListener {
         
         ChestManager.addItem(chest, is);
         //playerInv.remove(is);
-        Basic.removeItemStackFromInventory(playerInv, is);
+        Basic.removeItemStackFromInventory(playerInv, is, amount);
         
         player.updateInventory(); // Do not use this unless really needed, like now
         
         iConomyManager.substract(shop, price);
         iConomyManager.add(seller, price);
         
-        Logging.log(seller + " sold " + is.getType() + " with durability of " 
+        Logging.log(seller + " sold " + amount + " " + is.getType() + " with durability of " 
                 + is.getDurability() + " to " + shop + " for " + price + " " 
                 + iConomyManager.getCurrency());
         ConfigManager.sellingString(amount, line[3], shop, player, price);
@@ -150,12 +150,12 @@ public class ShopManager extends PlayerListener {
         
         
         is.setAmount(amount);
-        Basic.removeItemStackFromInventory(playerInv, is);
+        Basic.removeItemStackFromInventory(playerInv, is, amount);
         
         player.updateInventory(); // Do not use this unless really needed, like now
         iConomyManager.add(seller, price);
         
-        Logging.log(seller + " sold " + is.getType() + " with durability of " 
+        Logging.log(seller + " sold " + amount + " "+ is.getType() + " with durability of " 
                 + is.getDurability() + " to admin shop for " + price + " " 
                 + iConomyManager.getCurrency());
         ConfigManager.sellingString(amount, line[3], "admin shop", player, price);
@@ -174,14 +174,14 @@ public class ShopManager extends PlayerListener {
         int amount = Integer.parseInt(line[1]);
         is.setAmount(amount);
         String buyer = player.getName();
-        Basic.addItemToInventory(player.getInventory(), is); 
+        Basic.addItemToInventory(player.getInventory(), is, amount); 
         //player.getInventory().addItem(is);
         
         player.updateInventory(); // Do not use this unless really needed, like now
         
         iConomyManager.substract(buyer, price);
         
-        Logging.log(buyer + " bought " + is.getType() + " with durability of " 
+        Logging.log(buyer + " bought " + amount + " "+ is.getType() + " with durability of " 
                 + is.getDurability() + " from admin shop for " + price + " " 
                 + iConomyManager.getCurrency());
         ConfigManager.buyingString(amount, line[3], "admin shop", player, price);

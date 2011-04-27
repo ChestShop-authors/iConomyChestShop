@@ -169,9 +169,8 @@ public class Basic {
     }
 
     //Again...
-    public static void removeItemStackFromInventory(Inventory inv, ItemStack is) {
+    public static void removeItemStackFromInventory(Inventory inv, ItemStack is, int left) {
         ItemStack[] Items = inv.getContents();
-        int left = is.getAmount();
         boolean checkDurability = true;
         int id = is.getTypeId();
         if(ConfigManager.getBoolean("allowUsedItemsToBeSold") && id >= 256 && id <= 317){
@@ -206,8 +205,7 @@ public class Basic {
     }
     
     //Adds item to inventory
-    public static void addItemToInventory(Inventory inv, ItemStack is){
-        int left = is.getAmount();
+    public static void addItemToInventory(Inventory inv, ItemStack is, int left){
         int maxStackSize = is.getType().getMaxStackSize();
         if(left <= maxStackSize){
             inv.addItem(is);
@@ -237,8 +235,7 @@ public class Basic {
     }
     
     //Checks if there is enough free space in inventory
-    public static boolean checkFreeSpace(Inventory inv, ItemStack is){
-        int left = is.getAmount();
+    public static boolean checkFreeSpace(Inventory inv, ItemStack is, int left){
         ItemStack[] contents = inv.getContents();
         Material type = is.getType();
         short durability = is.getDurability();
