@@ -46,7 +46,7 @@ public class ConfigManager {
         ChestShopConfig.load();
     }
 
-    public static void buyingString(int amount, String item, String owner, Player player, int cost) {
+    public static void buyingString(int amount, String item, String owner, Player player, float cost) {
         String str = getLanguage("You_bought_items");
         str = str.replace("<amount>", amount + "");
         str = str.replace("<item>", item);
@@ -61,7 +61,7 @@ public class ConfigManager {
         }
     }
 
-    public static void buyingStringForShopOwner(int amount, String item, String owner, Player player, int cost) {
+    public static void buyingStringForShopOwner(int amount, String item, String owner, Player player, float cost) {
         String str = getLanguage("Somebody_bought_items_from_your_shop");
         str = str.replace("<amount>", amount + "");
         str = str.replace("<item>", item);
@@ -77,7 +77,7 @@ public class ConfigManager {
         }
     }
     
-    public static void sellingStringForShopOwner(int amount, String item, String owner, Player player, int cost) {
+    public static void sellingStringForShopOwner(int amount, String item, String owner, Player player, float cost) {
         String str = getLanguage("Somebody_sold_items_to_your_shop");
         str = str.replace("<amount>", amount + "");
         str = str.replace("<item>", item);
@@ -93,7 +93,7 @@ public class ConfigManager {
         }
     }
 
-    public static void sellingString(int amount, String item, String owner, Player player, int cost) {
+    public static void sellingString(int amount, String item, String owner, Player player, float cost) {
         String str = getLanguage("You_sold_items");
         str = str.replace("<amount>", amount + "");
         str = str.replace("<item>", item);

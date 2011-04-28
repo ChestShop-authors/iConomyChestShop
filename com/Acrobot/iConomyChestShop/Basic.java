@@ -26,7 +26,16 @@ public class Basic {
         try {
             Integer.parseInt(i);
             return true;
-        } catch (NumberFormatException nfe) {
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    public static boolean isFloat(String i){
+        try{
+            Float.parseFloat(i);
+            return true;
+        } catch (Exception e){
             return false;
         }
     }

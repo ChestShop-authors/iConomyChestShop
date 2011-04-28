@@ -37,26 +37,28 @@ public class iConomyManager {
         return true;
     }
     
-    public static void add(String name, int amount){
+    public static void add(String name, float amount){
         if(iConomy != null){
             Account acc = bank.getAccount(name);
             acc.add(amount);
         }
         if(BOSEconomy != null){
-            BOSEconomy.addPlayerMoney(name, amount, false);
+            int intAmount = Math.round(amount);
+            BOSEconomy.addPlayerMoney(name, intAmount, false);
         }
     }
     
-    public static void substract(String name, int amount){
+    public static void substract(String name, float amount){
         if(iConomy != null){
             Account acc = bank.getAccount(name);
             acc.subtract(amount);
         }
         if(BOSEconomy != null){
-            BOSEconomy.addPlayerMoney(name, -amount, false);
+            int intAmount = Math.round(amount);
+            BOSEconomy.addPlayerMoney(name, -intAmount, false);
         }
     }
-    public static boolean hasEnough(String name, int amount) {
+    public static boolean hasEnough(String name, float amount) {
         if (iConomy != null) {
             Account acc = bank.getAccount(name);
             return acc.hasEnough(amount);

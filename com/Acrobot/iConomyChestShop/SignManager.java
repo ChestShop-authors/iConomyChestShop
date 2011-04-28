@@ -46,7 +46,7 @@ public class SignManager extends BlockListener{
             boolean isFormated = mySign(text);
             boolean isGoodSign;
             try {
-                isGoodSign = (Basic.isInt(split[0]) && Basic.isInt(split[1])) || isFormated;
+                isGoodSign = (Basic.isFloat(split[0]) && Basic.isFloat(split[1])) || isFormated;
             } catch (ArrayIndexOutOfBoundsException aioob) {
                 return;
             }
@@ -75,7 +75,7 @@ public class SignManager extends BlockListener{
                     MinecartManiaChest neighbor = mmc.getNeighborChest();
                     if(neighbor != null)
                     {
-                        CraftSign sig = ProtectionManager.getSign(mmc.getNeighborChest().getChest().getBlock(), true);
+                        CraftSign sig = ProtectionManager.getSign(neighbor.getChest().getBlock(), true);
                         if(sig != null){
                             if (!sig.getLine(0).equals(p.getName()) && !isAdmin) {
                                 p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
@@ -89,11 +89,18 @@ public class SignManager extends BlockListener{
                     p.sendMessage(ConfigManager.getLanguage("Shop_cannot_be_created"));
                     return;
                 }
-                
-                if(Integer.parseInt(split[0]) < 0 || Integer.parseInt(split[1]) < 0){
-                    Basic.cancelEventAndDropSign(event);
-                    p.sendMessage(ConfigManager.getLanguage("Negative_price"));
-                    return;
+                if(!isFormated){
+                    if(Float.parseFloat(split[0]) < 0 || Float.parseFloat(split[1]) < 0){
+                        Basic.cancelEventAndDropSign(event);
+                        p.sendMessage(ConfigManager.getLanguage("Negative_price"));
+                        return;
+                    }
+                }else{
+                    if(SignManager.buyPrice(text[2]) < 0 || SignManager.sellPrice(text[2]) < 0){
+                        Basic.cancelEventAndDropSign(event);
+                        p.sendMessage(ConfigManager.getLanguage("Negative_price"));
+                        return;
+                    }
                 }
                 if (Integer.parseInt(text[1]) < 1) {
                     Basic.cancelEventAndDropSign(event);
@@ -106,7 +113,6 @@ public class SignManager extends BlockListener{
                     p.sendMessage(ConfigManager.getLanguage("incorrectID"));
                     return;
                 }
-                //if (!PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create") && !PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create." + itemStack.getTypeId())) {
                 if (!isAdmin && (PermissionManager.hasPermissions(p,"iConomyChestShop.shop.exclude."+itemStack.getTypeId()) || (!PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create") && !PermissionManager.hasPermissions(p, "iConomyChestShop.shop.create." + itemStack.getTypeId())))) {
                     p.sendMessage("[Permissions] You can't make this type of shop!");
                     Basic.cancelEventAndDropSign(event);
@@ -170,7 +176,7 @@ public class SignManager extends BlockListener{
     public static boolean mySign(String text[]) {
         try {
             String bs[] = text[2].replace(" ", "").split(":");
-            if (bs[0].substring(0, 1).equals("B") && bs[1].substring(bs[1].length() - 1, bs[1].length()).equals("S") && Basic.isInt(bs[0].substring(1)) && Basic.isInt(bs[1].substring(0, bs[1].length() - 1))) {
+            if (bs[0].substring(0, 1).equals("B") && bs[1].substring(bs[1].length() - 1, bs[1].length()).equals("S") && Basic.isFloat(bs[0].substring(1)) && Basic.isFloat(bs[1].substring(0, bs[1].length() - 1))) {
                 return true;
             }
             return false;
@@ -179,15 +185,23 @@ public class SignManager extends BlockListener{
         }
     }
 
-    public static int buyPrice(Sign sign) {
-        String text = sign.getLine(2).replace(" ", "");
+    public static float buyPrice(String text){
+        text = text.replace(" ", "");
         String bs[] = text.split(":");
-        return Integer.parseInt(bs[0].substring(1));
+        return Float.parseFloat(bs[0].substring(1));
+    }
+    public static float buyPrice(Sign sign) {
+        String text = sign.getLine(2);
+        return buyPrice(text);
     }
 
-    public static int sellPrice(Sign sign) {
-        String text = sign.getLine(2).replace(" ", "");
+    public static float sellPrice(String text){
+        text = text.replace(" ", "");
         String bs[] = text.split(":");
-        return Integer.parseInt(bs[1].substring(0, bs[1].length() - 1));
+        return Float.parseFloat(bs[1].substring(0, bs[1].length() - 1));
+    }
+    public static float sellPrice(Sign sign) {
+        String text = sign.getLine(2);
+        return sellPrice(text);
     }
 }

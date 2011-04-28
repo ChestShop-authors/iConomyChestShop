@@ -20,7 +20,7 @@ public class ShopManager extends PlayerListener {
     
 	public static void buy(PlayerInteractEvent event) {
         Sign sign = (Sign) event.getClickedBlock().getState();
-        int price = SignManager.buyPrice(sign);
+        float price = SignManager.buyPrice(sign);
         Player player = event.getPlayer();
         if (price == 0) {
             player.sendMessage(ConfigManager.getLanguage("No_buying_from_this_shop"));
@@ -90,7 +90,7 @@ public class ShopManager extends PlayerListener {
         ItemStack is = Basic.getItemStack(line[3].replace(":", ";"));
         Player player = event.getPlayer();
         Inventory playerInv = player.getInventory();
-        int price = SignManager.sellPrice(sign);
+        float price = SignManager.sellPrice(sign);
         int amount = Integer.parseInt(line[1]);
         String seller = player.getName();
         String shop = line[0];
@@ -144,7 +144,7 @@ public class ShopManager extends PlayerListener {
         ItemStack is = Basic.getItemStack(line[3].replace(":", ";"));
         Player player = event.getPlayer();
         Inventory playerInv = player.getInventory();
-        int price = SignManager.sellPrice(sign);
+        float price = SignManager.sellPrice(sign);
         int amount = Integer.parseInt(line[1]);
         String seller = player.getName();
         
@@ -164,7 +164,7 @@ public class ShopManager extends PlayerListener {
     
 	public static void adminBuy(PlayerInteractEvent event) {
         Sign sign = (Sign) event.getClickedBlock().getState();
-        int price = SignManager.buyPrice(sign);
+        float price = SignManager.buyPrice(sign);
         Player player = event.getPlayer();
         String[] line = sign.getLines();
         ItemStack is = Basic.getItemStack(line[3].replace(":", ";"));
