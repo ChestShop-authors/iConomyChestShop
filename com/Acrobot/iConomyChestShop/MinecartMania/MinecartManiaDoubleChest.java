@@ -188,8 +188,8 @@ public class MinecartManiaDoubleChest implements MinecartManiaInventory{
 	 * @param item to search for
 	 * @return the first slot with the given item
 	 */
-	public int first(Item item) {
-		return first(item.getId(), (short) (item.hasData() ? item.getData() : -1));
+	public int first(ItemStack item) {
+		return first(item.getTypeId(), (short) (item.getDurability() > 0 ? item.getData() : -1));
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class MinecartManiaDoubleChest implements MinecartManiaInventory{
 	 * @param item to search for
 	 * @return true if the Item is found
 	 */
-	public boolean contains(Item item) {
+	public boolean contains(ItemStack item) {
 		return (chest1.contains(item) || chest2.contains(item));
 	}
 
@@ -268,9 +268,9 @@ public class MinecartManiaDoubleChest implements MinecartManiaInventory{
 	public boolean contains(int type, short durability) {
 		return chest1.contains(type, durability) || chest2.contains(type, durability);
 	}
-	
-	public int amount(Item item) {
-		return chest1.amount(item) + chest2.amount(item);
-	}
+        
+        public int amount(ItemStack item){
+            return chest1.amount(item) + chest2.amount(item);
+        }
 
 }

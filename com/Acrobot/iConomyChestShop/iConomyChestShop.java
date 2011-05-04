@@ -1,8 +1,12 @@
 package com.Acrobot.iConomyChestShop;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import javax.persistence.PersistenceException;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -29,7 +33,7 @@ public class iConomyChestShop extends JavaPlugin {
     private final iConomyChestShopBlockBreak blockBreakListener = new iConomyChestShopBlockBreak();
     
     private static Server Server = null;
-    private final HashMap<Player, Boolean> sellUsers = new HashMap<Player, Boolean>();
+    private static final HashMap<Player, Boolean> sellUsers = new HashMap<Player, Boolean>();
     
 
     public void onEnable() {
@@ -44,11 +48,56 @@ public class iConomyChestShop extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Highest, this);
         
         PluginDescriptionFile pdfFile = this.getDescription();
+        int interval;
+        if(ConfigManager.getBoolean("useDB")){
+            setupDatabaseFile(); //DB stuff
+            setupDatabase();
+            if((interval = ConfigManager.getInt("intervalBetweenGeneratingTransactionList")) == 0){
+                interval = 300;
+            }
+            if(ConfigManager.getBoolean("generateTransactionList")){
+                getServer().getScheduler().scheduleAsyncRepeatingTask(this, new StatGenerator(), 20L * interval, 20L * interval);
+            }
+        }
+        if((interval = ConfigManager.getInt("intervalBetweenTransactions")) == 0){
+            interval = 300;
+        }
+        iConomyChestShopPlayerListener.interval = interval;
+        Logging.setPlugin(this);
+        StatGenerator.setPlugin(this);
+        
         System.out.println("[" + pdfFile.getName() + "]" + " version " + pdfFile.getVersion() + " initialized!");
     }
 
-    public boolean enabled(Player player) {
+    public static boolean enabled(Player player) {
         return sellUsers.containsKey(player);
+    }
+    
+    private void setupDatabaseFile(){
+        File file = new File("ebean.properties");
+        if(!file.exists()){
+            try{
+                file.createNewFile();
+            }catch (Exception e){
+                System.out.println("[iConomyChestShop] Failed to create ebean.properties file.");
+            }
+        }
+    }
+    
+    private void setupDatabase(){
+        try{
+            getDatabase().find(Transaction.class).findRowCount();
+        } catch (PersistenceException ex) {
+            System.out.println("[iConomyChestShop] Installing database for " + getDescription().getName() + " due to first time usage.");
+            installDDL();
+        }
+    }
+    
+    @Override
+    public List<Class<?>> getDatabaseClasses() {
+        List<Class<?>> list = new ArrayList<Class<?>>();
+        list.add(Transaction.class);
+        return list;
     }
     
     public void sellCommand(Player player) {
@@ -70,15 +119,7 @@ public class iConomyChestShop extends JavaPlugin {
             player.sendMessage(ConfigManager.getLanguage("Mode_changed_to_buy"));
         }
     }
-    public void helpCommand(Player player){
-        player.sendMessage("ChestShop sign lines:");
-        boolean isAdmin = PermissionManager.hasPermissions(player, "iConomyChestShop.shop.admin");
-        player.sendMessage("1. blank" + (isAdmin ? "/other player name/admin shop" : ""));
-        player.sendMessage("2. amount of the item you want to sell");
-        player.sendMessage("3. price you sell:price you buy");
-        player.sendMessage("4. item id/name/alias");
-        player.sendMessage("If the buy or sell price is 0, people can't buy/sell there");
-    }
+    
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         PluginDescriptionFile pdfFile = this.getDescription();
@@ -108,10 +149,6 @@ public class iConomyChestShop extends JavaPlugin {
                 }
                 if(args[0].equals("sell")){
                     sellCommand(player);
-                    return true;
-                }
-                if(args[0].equals("help")){
-                    helpCommand(player);
                     return true;
                 }
                 return false;
@@ -149,8 +186,6 @@ public class iConomyChestShop extends JavaPlugin {
                 if (mat == null) {
                     return false;
                 }
-                @SuppressWarnings("unused")
-		String matName = "";
                 String othernames = "";
                 if (Basic.OI != null) {
                     Set<String> aliases = Basic.OI.getAliases(mat.getId() + dmgValue.replace(":", ";"));
@@ -163,8 +198,6 @@ public class iConomyChestShop extends JavaPlugin {
                                 othernames += ", " + obj;
                         }
                     }
-                }else{
-                    matName = mat.getId() + "";
                 }
                 player.sendMessage(Basic.colorChat(ConfigManager.getLanguage("iteminfo")));
                 String msg = "&b" + mat.getId() + (!dmgValue.equals("") ? dmgValue.replace(";", ":") : "") + "&f - " + "&b" + mat.name() + othernames;

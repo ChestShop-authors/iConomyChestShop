@@ -56,7 +56,22 @@ public class ConfigManager {
         player.sendMessage(str);
         moneyLeft(player);
         buyingStringForShopOwner(amount, item, owner, player, cost);
-        if(separateMessages()){
+        if (separateMessages()) {
+            player.sendMessage(getSeparatingLine());
+        }
+    }
+
+    public static void sellingString(int amount, String item, String owner, Player player, float cost) {
+        String str = getLanguage("You_sold_items");
+        str = str.replace("<amount>", amount + "");
+        str = str.replace("<item>", item);
+        str = str.replace("<owner>", owner);
+        str = str.replace("<cost>", formattedBalance(cost));
+
+        player.sendMessage(str);
+        sellingStringForShopOwner(amount, item, owner, player, cost);
+        moneyLeft(player);
+        if (separateMessages()) {
             player.sendMessage(getSeparatingLine());
         }
     }
@@ -72,11 +87,11 @@ public class ConfigManager {
             return;
         }
         ownerPlayer.sendMessage(str);
-        if(separateMessages()){
+        if (separateMessages()) {
             ownerPlayer.sendMessage(getSeparatingLine());
         }
     }
-    
+
     public static void sellingStringForShopOwner(int amount, String item, String owner, Player player, float cost) {
         String str = getLanguage("Somebody_sold_items_to_your_shop");
         str = str.replace("<amount>", amount + "");
@@ -88,43 +103,31 @@ public class ConfigManager {
             return;
         }
         ownerPlayer.sendMessage(str);
-        if(separateMessages()){
+        if (separateMessages()) {
             ownerPlayer.sendMessage(getSeparatingLine());
         }
     }
 
-    public static void sellingString(int amount, String item, String owner, Player player, float cost) {
-        String str = getLanguage("You_sold_items");
-        str = str.replace("<amount>", amount + "");
-        str = str.replace("<item>", item);
-        str = str.replace("<owner>", owner);
-        str = str.replace("<cost>", formattedBalance(cost));
-
-        player.sendMessage(str);
-        sellingStringForShopOwner(amount, item, owner, player, cost);
-        moneyLeft(player);
-        if(separateMessages()){
-            player.sendMessage(getSeparatingLine());
-        }
-    }
-
     public static String formattedBalance(double balance) {
-        String formatedBalance = iConomyManager.formatedBalance(balance);
+        String formatedBalance = economyManager.formatedBalance(balance);
         return formatedBalance;
     }
 
     public static void moneyLeft(Player player) {
-        double balance = iConomyManager.balance(player.getName());
+        if (!ConfigManager.getBoolean("showMoneyAfterTransaction")) {
+            return;
+        }
+        double balance = economyManager.balance(player.getName());
         String msg = getLanguage("Your_balance");
         msg = msg.replace("<money>", formattedBalance(balance));
         player.sendMessage(msg);
     }
-    
-    public static String getSeparatingLine(){
+
+    public static String getSeparatingLine() {
         return ChatColor.RED + "---------------------------------";
     }
-    
-    public static boolean separateMessages(){
+
+    public static boolean separateMessages() {
         return getBoolean("separatingLineAfterTransaction");
     }
     public static Configuration ChestShopConfig = new Configuration(new File("plugins/iConomyChestShop/config.yml"));

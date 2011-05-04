@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -29,7 +30,7 @@ public class MinecartManiaWorld {
 		} 
 		else {
 			//Verify that this block is still a chest (could have been changed)
-			if (MinecartManiaWorld.getBlockIdAt(testChest.getWorld(), testChest.getX(), testChest.getY(), testChest.getZ()) == Item.CHEST.getId()) {
+			if (MinecartManiaWorld.getBlockIdAt(testChest.getWorld(), testChest.getX(), testChest.getY(), testChest.getZ()) == Material.CHEST.getId()) {
 				testChest.updateInventory(testChest.getInventory());
 				return testChest;
 			}
@@ -248,12 +249,12 @@ public class MinecartManiaWorld {
 	public static void setBlockPowered(World w, int x, int y, int z, boolean power) {
 		MaterialData md = getBlockAt(w, x, y, z).getState().getData();
 		int data = getBlockData(w, x, y, z);
-		if (getBlockAt(w, x, y, z).getTypeId() == (Item.DIODE_BLOCK_OFF.getId()) && power) {
-			setBlockAt(w, Item.DIODE_BLOCK_ON.getId(), x, y, z);
+		if (getBlockAt(w, x, y, z).getTypeId() == (Material.DIODE_BLOCK_OFF.getId()) && power) {
+			setBlockAt(w, Material.DIODE_BLOCK_ON.getId(), x, y, z);
 			setBlockData(w, x, y, z, (byte)data);
 		}
-		else if (getBlockAt(w, x, y, z).getTypeId() == (Item.DIODE_BLOCK_ON.getId()) && !power) {
-			setBlockAt(w, Item.DIODE_BLOCK_OFF.getId(), x, y, z);
+		else if (getBlockAt(w, x, y, z).getTypeId() == (Material.DIODE_BLOCK_ON.getId()) && !power) {
+			setBlockAt(w, Material.DIODE_BLOCK_OFF.getId(), x, y, z);
 			setBlockData(w, x, y, z, (byte)data);
 		}
 		else if (md instanceof Lever || md instanceof Button) {

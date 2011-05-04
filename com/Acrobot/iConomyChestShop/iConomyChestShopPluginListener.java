@@ -1,7 +1,7 @@
 package com.Acrobot.iConomyChestShop;
 
 import com.griefcraft.lwc.LWCPlugin;
-import com.nijiko.coelho.iConomy.iConomy;
+import com.iConomy.iConomy;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import cosine.boseconomy.BOSEconomy;
 import info.somethingodd.bukkit.OddItem.OddItem;
@@ -23,12 +23,12 @@ public class iConomyChestShopPluginListener extends ServerListener{
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
         //iConomy
-        if(iConomyManager.getiConomy() == null) {
+        if(economyManager.getiConomy() == null) {
             Plugin iConomy = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("iConomy");
 
             if (iConomy != null) {
                 if (iConomy.isEnabled()) {
-                    iConomyManager.setiConomy((iConomy) iConomy);
+                    economyManager.setiConomy((iConomy) iConomy);
                     PluginDescriptionFile pDesc = iConomy.getDescription();
                     System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
                 }
@@ -81,10 +81,10 @@ public class iConomyChestShopPluginListener extends ServerListener{
         }
         
         //BOSEconomy
-        if (iConomyManager.BOSEconomy == null) {
+        if (economyManager.BOSEconomy == null) {
             Plugin tmp = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("BOSEconomy");
             if (tmp != null) {
-                iConomyManager.BOSEconomy = (BOSEconomy) tmp;
+                economyManager.BOSEconomy = (BOSEconomy) tmp;
                 PluginDescriptionFile pDesc = tmp.getDescription();
                 System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
             }

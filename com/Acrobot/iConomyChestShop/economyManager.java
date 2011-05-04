@@ -1,18 +1,16 @@
 package com.Acrobot.iConomyChestShop;
 
-import com.nijiko.coelho.iConomy.iConomy;
-import com.nijiko.coelho.iConomy.system.Account;
-import com.nijiko.coelho.iConomy.system.Bank;
+import com.iConomy.*;
+import com.iConomy.system.Holdings;
 import cosine.boseconomy.BOSEconomy;
 
 /**
  *
  * @author Acrobot
  */
-public class iConomyManager {
+public class economyManager {
     private static iConomy iConomy = null;
     public static BOSEconomy BOSEconomy = null;
-    static Bank bank = null;
     
     public static iConomy getiConomy() {
         return iConomy;
@@ -20,7 +18,7 @@ public class iConomyManager {
 
     public static boolean hasAccount(String p){
         if(iConomy != null){
-            return bank.hasAccount(p);
+            return iConomy.hasAccount(p);
         }
         if(BOSEconomy != null){
             return true;
@@ -30,7 +28,6 @@ public class iConomyManager {
     public static boolean setiConomy(iConomy plugin) {
         if (iConomy == null) {
             iConomy = plugin;
-            bank = com.nijiko.coelho.iConomy.iConomy.getBank();
         } else {
             return false;
         }
@@ -39,8 +36,8 @@ public class iConomyManager {
     
     public static void add(String name, float amount){
         if(iConomy != null){
-            Account acc = bank.getAccount(name);
-            acc.add(amount);
+            Holdings balance = iConomy.getAccount(name).getHoldings();
+            balance.add(amount);
         }
         if(BOSEconomy != null){
             int intAmount = Math.round(amount);
@@ -50,8 +47,8 @@ public class iConomyManager {
     
     public static void substract(String name, float amount){
         if(iConomy != null){
-            Account acc = bank.getAccount(name);
-            acc.subtract(amount);
+            Holdings balance = iConomy.getAccount(name).getHoldings();
+            balance.subtract(amount);
         }
         if(BOSEconomy != null){
             int intAmount = Math.round(amount);
@@ -60,35 +57,28 @@ public class iConomyManager {
     }
     public static boolean hasEnough(String name, float amount) {
         if (iConomy != null) {
-            Account acc = bank.getAccount(name);
-            return acc.hasEnough(amount);
+            Holdings balance = iConomy.getAccount(name).getHoldings();
+            return balance.hasEnough(amount);
         }
         if(BOSEconomy != null){
             return (BOSEconomy.getPlayerMoney(name) >= amount);
         }
         return false;
     }
-    public static String getCurrency(){
-        if(iConomy != null){
-            return bank.getCurrency();
-        }
-        if(BOSEconomy != null){
-            return BOSEconomy.getMoneyNameCaps();
-        }
-        return null;
-    }
+    
     public static double balance(String name){
         if(iConomy != null){
-            return bank.getAccount(name).getBalance();
+            return iConomy.getAccount(name).getHoldings().balance();
         }
         if(BOSEconomy != null){
             return BOSEconomy.getPlayerMoney(name);
         }
         return 0;
     }
+    
     public static String formatedBalance(double amount){
         if(iConomy != null){
-            return bank.format(amount);
+            return iConomy.format(amount);
         }
         String stringAmount = amount + "";
         stringAmount = stringAmount.replace(".0", "");

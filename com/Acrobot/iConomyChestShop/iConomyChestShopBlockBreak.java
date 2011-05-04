@@ -16,7 +16,7 @@ public class iConomyChestShopBlockBreak extends BlockListener{
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         Player p = event.getPlayer();
-        boolean admin = PermissionManager.hasPermissions(p, "iConomyChestShop.shop.admin");
+        boolean admin = PermissionManager.hasPermissions(p, "iConomyChestShop.admin");
         if(admin){
             return;
         }

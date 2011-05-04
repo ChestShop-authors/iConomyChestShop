@@ -1,5 +1,6 @@
 package com.Acrobot.iConomyChestShop;
 
+import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
 import info.somethingodd.bukkit.OddItem.OddItem;
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class Basic {
         try {
             BlockFace.valueOf(ConfigManager.getString("position"));
             return true;
-        } catch (IllegalArgumentException iae) {
+        } catch (Exception iae) {
             return false;
         }
     }
@@ -213,10 +214,14 @@ public class Basic {
         }
     }
     
+    public static void addItemToInventory(MinecartManiaChest chest, ItemStack is, int left){
+        addItemToInventory(chest.getInventory(), is, left);
+    }
     //Adds item to inventory
     public static void addItemToInventory(Inventory inv, ItemStack is, int left){
         int maxStackSize = is.getType().getMaxStackSize();
         if(left <= maxStackSize){
+            is.setAmount(left);
             inv.addItem(is);
             return;
         }
@@ -241,6 +246,11 @@ public class Basic {
         }else{
             inv.addItem(is);
         }
+    }
+    
+    public static boolean checkFreeSpace(MinecartManiaChest chest,ItemStack is, int left){
+        Inventory inv = chest.getInventory();
+        return checkFreeSpace(inv, is, left);
     }
     
     //Checks if there is enough free space in inventory
@@ -284,6 +294,8 @@ public class Basic {
         event.setCancelled(true);
         Block block = event.getBlock();
         block.setType(Material.AIR);
-        block.getWorld().dropItem(block.getLocation(), new ItemStack(Material.SIGN));
+        block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.SIGN, 1));
     }
+    
+    
 }

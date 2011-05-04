@@ -2,7 +2,9 @@ name: iConomyChestShop
 
 main: com.Acrobot.iConomyChestShop.iConomyChestShop
 
-version: 2.54
+database: true
+version: 2.6
+
 
 author: Acrobot
 description: >
@@ -33,4 +35,3 @@ commands:
     description: Shows the iConomyChestShop's version
     usage: |
            /<command>
-           

@@ -5,6 +5,7 @@ import com.Acrobot.iConomyChestShop.ConfigManager;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
@@ -64,16 +65,16 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
      * @param z coordinate to search
      */
     public static MinecartManiaChest getNeighborChest(World w, int x, int y, int z) {
-        if (MinecartManiaWorld.getBlockAt(w, x - 1, y, z).getTypeId() == Item.CHEST.getId()) {
+        if (MinecartManiaWorld.getBlockAt(w, x - 1, y, z).getTypeId() == Material.CHEST.getId()) {
             return MinecartManiaWorld.getMinecartManiaChest((Chest) MinecartManiaWorld.getBlockAt(w, x - 1, y, z).getState());
         }
-        if (MinecartManiaWorld.getBlockAt(w, x + 1, y, z).getTypeId() == Item.CHEST.getId()) {
+        if (MinecartManiaWorld.getBlockAt(w, x + 1, y, z).getTypeId() == Material.CHEST.getId()) {
             return MinecartManiaWorld.getMinecartManiaChest((Chest) MinecartManiaWorld.getBlockAt(w, x + 1, y, z).getState());
         }
-        if (MinecartManiaWorld.getBlockAt(w, x, y, z - 1).getTypeId() == Item.CHEST.getId()) {
+        if (MinecartManiaWorld.getBlockAt(w, x, y, z - 1).getTypeId() == Material.CHEST.getId()) {
             return MinecartManiaWorld.getMinecartManiaChest((Chest) MinecartManiaWorld.getBlockAt(w, x, y, z - 1).getState());
         }
-        if (MinecartManiaWorld.getBlockAt(w, x, y, z + 1).getTypeId() == Item.CHEST.getId()) {
+        if (MinecartManiaWorld.getBlockAt(w, x, y, z + 1).getTypeId() == Material.CHEST.getId()) {
             return MinecartManiaWorld.getMinecartManiaChest((Chest) MinecartManiaWorld.getBlockAt(w, x, y, z + 1).getState());
         }
 
@@ -115,7 +116,7 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
             return true;
         }
         //WTF is it with air
-        if (item.getTypeId() == Item.AIR.getId()) {
+        if (item.getTypeId() == Material.AIR.getId()) {
             return false;
         }
         //Backup contents
@@ -186,10 +187,13 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
     public boolean removeItem(int type, int amount, short durability) {
         //Backup contents
         ItemStack[] backup = getContents().clone();
-
+        boolean checkDurability = true;
+        if(ConfigManager.getBoolean("allowUsedItemsToBeSold") && type >= 256 && type <= 317){
+            checkDurability = false;
+        }
         for (int i = 0; i < size(); i++) {
             if (getItem(i) != null) {
-                if (getItem(i).getTypeId() == type && (durability == -1 || (getItem(i).getDurability() == durability))) {
+                if (getItem(i).getTypeId() == type && (!checkDurability || durability == -1 || (getItem(i).getDurability() == durability))) {
                     if (getItem(i).getAmount() - amount > 0) {
                         setItem(i, new ItemStack(type, getItem(i).getAmount() - amount, durability));
                         update();

@@ -1,5 +1,6 @@
 package com.Acrobot.iConomyChestShop;
 
+import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,15 +17,23 @@ import org.bukkit.event.player.PlayerListener;
  */
 public class iConomyChestShopPlayerListener extends PlayerListener {
 
-    private final iConomyChestShop plugin;
+    public static int interval;
+    private HashMap<String, Long> userTime = new HashMap<String, Long>();
     
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        String playerName = player.getName();
+        if(userTime.containsKey(playerName)){
+            if((System.currentTimeMillis() - userTime.get(playerName).longValue()) < interval){
+                player.sendMessage(ConfigManager.getLanguage("wait"));
+                return;
+            }
+        }
         if (player.getName().toLowerCase().replace(" ", "").equals("adminshop")) {
-            if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.admin")) {
+            if (!PermissionManager.hasPermissions(player, "iConomyChestShop.admin")) {
                 player.sendMessage("[iConomyChestShop] Do you really think you can trick me?");
-                Logging.log("Player " + player.getName() + " with ip: " + player.getAddress().getAddress().getHostAddress() + " tried to use this plugin.");
+                Logging.log("Player " + playerName + " with ip: " + player.getAddress().getAddress().getHostAddress() + " tried to use this plugin.");
                 event.setCancelled(true);
                 return;
             }
@@ -35,7 +44,7 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         if ((action != Action.RIGHT_CLICK_BLOCK && action != Action.LEFT_CLICK_BLOCK) || (action == Action.LEFT_CLICK_BLOCK && !sneakMode)) {
             return;
         }
-        if (!PermissionManager.hasPermissions(player, "iConomyChestShop.shop.admin")) {
+        if (!PermissionManager.hasPermissions(player, "iConomyChestShop.admin")) {
             if (clickedBlock.getTypeId() == 54) {
                 ProtectionManager.chestInteract(clickedBlock, player, event);
             }
@@ -45,7 +54,7 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         }
         Sign sign = (Sign) event.getClickedBlock().getState();
         String name = sign.getLine(0);
-        if (iConomyManager.getiConomy() == null && iConomyManager.BOSEconomy == null) {
+        if (economyManager.getiConomy() == null && economyManager.BOSEconomy == null) {
             System.out.println("[iConomyChestShop] No economy plugin found!");
             player.sendMessage("[iConomyChestShop] No economy plugin found!");
             return;
@@ -60,8 +69,9 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         if (!SignManager.mySign(sign)) {
             return;
         }
+        
         if (!name.toLowerCase().replace(" ", "").equals("adminshop")) {
-            if (!iConomyManager.hasAccount(name)) {
+            if (!economyManager.hasAccount(name)) {
                 player.sendMessage(ConfigManager.getLanguage("Seller_has_no_account"));
                 return;
             }
@@ -73,27 +83,9 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         if(Integer.parseInt(sign.getLine(1)) < 1){
             return;
         }
-        if (ConfigManager.getBoolean("sneakMode") && action == Action.LEFT_CLICK_BLOCK) {
-            if (player.isSneaking()) {
-                return;
-            }
-            if (!canSell(player)) {
-                return;
-            }
-            ShopManager.sell(event);
-        } else if (action == Action.RIGHT_CLICK_BLOCK) {
-            event.setCancelled(true);
-            if (!plugin.enabled(player)) {
-                if(!canBuy(player)){
-                    return;
-                }
-                ShopManager.buy(event);
-            } else {
-                if(!canSell(player)){
-                    return;
-                }
-                ShopManager.sell(event);
-            }
+        userTime.put(playerName, System.currentTimeMillis());
+        if ((ConfigManager.getBoolean("sneakMode") && action == Action.LEFT_CLICK_BLOCK && !player.isSneaking()) || action == Action.RIGHT_CLICK_BLOCK){
+            ShopManager.transaction(event);
         }
     }
 
@@ -118,6 +110,5 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
     }
 
     public iConomyChestShopPlayerListener(iConomyChestShop instance) {
-        plugin = instance;
     }
 }
