@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -55,6 +56,14 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
      */
     public MinecartManiaChest getNeighborChest() {
         return getNeighborChest(chest.getWorld(), getX(), getY(), getZ());
+    }
+
+    public static boolean hasNeightborChest(Block block){
+        return (getNeighborChest(block.getWorld(), block.getX(), block.getY(), block.getZ()) != null);
+    }
+
+    public static Block getNeightborChestBlock(Block block){
+        return (hasNeightborChest(block) ? getNeighborChest(block.getWorld(), block.getX(), block.getY(), block.getZ()).getChest().getBlock() : null);
     }
 
     /**
@@ -120,7 +129,7 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
             return false;
         }
 
-        int max = item.getType().getMaxStackSize();
+        int max = (ConfigManager.getBoolean("stackUnstackableItems") ? 64 : item.getType().getMaxStackSize());
 
         //First attempt to merge the itemstack with existing item stacks that aren't full (< 64)
         for (int i = 0; i < size(); i++) {

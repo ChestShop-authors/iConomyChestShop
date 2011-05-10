@@ -58,34 +58,36 @@ public class SignManager extends BlockListener {
                 if (!(!text[0].equals("") && isAdmin)) {
                     event.setLine(0, playerName);
                 }
-                if (chest != null && !isAdmin) {
-                    Block ChestB = chest.getBlock();
-                    CraftSign sign;
-                    if((sign = ProtectionManager.getSign(ChestB, false)) != null){
-                        if(!sign.getLine(0).equals(p.getName())){
-                            p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
-                            Basic.cancelEventAndDropSign(event);
-                            return;
-                        }
-                    }
-                    if (ProtectionManager.isProtected(ChestB) && !isAdmin) {
-                        if (ProtectionManager.protectedByWho(ChestB) != null) {
-                            if (!ProtectionManager.protectedByWho(ChestB).equals(Basic.stripName(playerName))) {
+                if (chest != null) {
+                    if(!isAdmin){
+                        Block ChestB = chest.getBlock();
+                        CraftSign sign;
+                        if((sign = ProtectionManager.getSign(ChestB, false)) != null){
+                            if(!sign.getLine(0).equals(p.getName())){
                                 p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
                                 Basic.cancelEventAndDropSign(event);
                                 return;
                             }
                         }
-                    }
-                    MinecartManiaChest mmc = new MinecartManiaChest(chest);
-                    MinecartManiaChest neighbor = mmc.getNeighborChest();
-                    if (neighbor != null) {
-                        CraftSign sig = ProtectionManager.getSign(neighbor.getChest().getBlock(), true);
-                        if (sig != null) {
-                            if (!sig.getLine(0).equals(playerName) && !isAdmin) {
-                                p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
-                                Basic.cancelEventAndDropSign(event);
-                                return;
+                        if (ProtectionManager.isProtected(ChestB)) {
+                            if (ProtectionManager.protectedByWho(ChestB) != null) {
+                                if (!ProtectionManager.protectedByWho(ChestB).equals(Basic.stripName(playerName))) {
+                                    p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
+                                    Basic.cancelEventAndDropSign(event);
+                                    return;
+                                }
+                            }
+                        }
+                        MinecartManiaChest mmc = new MinecartManiaChest(chest);
+                        MinecartManiaChest neighbor = mmc.getNeighborChest();
+                        if (neighbor != null) {
+                            CraftSign sig = ProtectionManager.getSign(neighbor.getChest().getBlock(), true);
+                            if (sig != null) {
+                                if (!sig.getLine(0).equals(playerName) && !isAdmin) {
+                                    p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
+                                    Basic.cancelEventAndDropSign(event);
+                                    return;
+                                }
                             }
                         }
                     }

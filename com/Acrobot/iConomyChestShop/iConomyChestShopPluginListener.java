@@ -25,7 +25,6 @@ public class iConomyChestShopPluginListener extends ServerListener{
         //iConomy
         if(EconomyManager.getiConomy() == null) {
             Plugin iConomy = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("iConomy");
-
             if (iConomy != null) {
                 if (iConomy.isEnabled()) {
                     EconomyManager.setiConomy((iConomy) iConomy);

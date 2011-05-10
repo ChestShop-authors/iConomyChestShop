@@ -17,6 +17,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
 
+import static com.Acrobot.iConomyChestShop.SignManager.mySign;
+
 /**
  *
  * @author Acrobot
@@ -268,7 +270,7 @@ public class Basic {
             BlockFace face = BlockFace.valueOf(ConfigManager.getString("position").toUpperCase());
             int distance = ConfigManager.getInt("distance");
             Block faceBlock = block.getRelative(face.getModX() * -distance, face.getModY() * -distance, face.getModZ() * -distance);
-            return (faceBlock != null && faceBlock.getType() == Material.SIGN || faceBlock.getType() == Material.SIGN_POST || faceBlock.getType() == Material.WALL_SIGN ? (CraftSign) faceBlock.getState() : null);
+            return (faceBlock != null && faceBlock.getType() == Material.SIGN || faceBlock.getType() == Material.SIGN_POST || faceBlock.getType() == Material.WALL_SIGN && mySign((CraftSign) faceBlock.getState()) ? (CraftSign) faceBlock.getState() : null);
         }
         for(BlockFace bf : BlockFace.values()){
             Block faceBlock = block.getFace(bf);

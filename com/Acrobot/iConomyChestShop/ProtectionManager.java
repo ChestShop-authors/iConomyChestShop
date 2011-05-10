@@ -7,12 +7,10 @@ import com.griefcraft.model.ProtectionTypes;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
 import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.material.Sign;
 import org.yi.acru.bukkit.Lockette.Lockette;
 
 /**
@@ -143,17 +141,12 @@ public class ProtectionManager {
         if (sign != null) {
             return sign;
         } else if (!recurency) {
-            MinecartManiaChest mmc = new MinecartManiaChest((Chest) chest.getState());
-            MinecartManiaChest nbChest = mmc.getNeighborChest();
-            if (nbChest != null) {
-                Chest nbchest = nbChest.getChest();
-                return getSign(nbchest.getBlock(), true);
-            } else {
-                return null;
+            Block neighborChest;
+            if((neighborChest = MinecartManiaChest.getNeightborChestBlock(chest)) != null){
+                return getSign(neighborChest, true);
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
     public static boolean cfgProtection() {
