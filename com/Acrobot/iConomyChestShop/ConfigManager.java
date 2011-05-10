@@ -13,33 +13,28 @@ import org.bukkit.util.config.Configuration;
 public class ConfigManager {
 
     public static boolean getBoolean(String node) {
-        load();
         return ChestShopConfig.getBoolean(node, false);
     }
 
     public static String getString(String node) {
-        load();
         return ChestShopConfig.getString(node);
     }
 
     public static int getInt(String node) {
-        load();
         return ChestShopConfig.getInt(node, 0);
     }
 
+    public static double getDouble(String node) {
+        return ChestShopConfig.getDouble(node, -1);
+    }
+
     public static String getLanguage(String node) {
-        load();
-        String str = "";
+        String str;
         String prefix = ChestShopConfig.getNode("lang").getString("prefix", "[Shop]");
         str = prefix + ChestShopConfig.getNode("lang").getString(node, "Error - no translation for " + node);
         str = Basic.colorChat(str);
 
         return str;
-    }
-
-    public static int getAlias(String node) {
-        load();
-        return ChestShopConfig.getNode("aliases").getInt(node, 0);
     }
 
     public static void load() {
@@ -109,15 +104,14 @@ public class ConfigManager {
     }
 
     public static String formattedBalance(double balance) {
-        String formatedBalance = economyManager.formatedBalance(balance);
-        return formatedBalance;
+        return EconomyManager.formatedBalance(balance);
     }
 
     public static void moneyLeft(Player player) {
         if (!ConfigManager.getBoolean("showMoneyAfterTransaction")) {
             return;
         }
-        double balance = economyManager.balance(player.getName());
+        double balance = EconomyManager.balance(player.getName());
         String msg = getLanguage("Your_balance");
         msg = msg.replace("<money>", formattedBalance(balance));
         player.sendMessage(msg);
@@ -130,5 +124,5 @@ public class ConfigManager {
     public static boolean separateMessages() {
         return getBoolean("separatingLineAfterTransaction");
     }
-    public static Configuration ChestShopConfig = new Configuration(new File("plugins/iConomyChestShop/config.yml"));
+    public static final Configuration ChestShopConfig = new Configuration(new File("plugins/iConomyChestShop/config.yml"));
 }

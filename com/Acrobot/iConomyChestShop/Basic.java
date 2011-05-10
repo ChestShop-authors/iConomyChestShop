@@ -3,16 +3,19 @@ package com.Acrobot.iConomyChestShop;
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
 import info.somethingodd.bukkit.OddItem.OddItem;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
+import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Sign;
 
 /**
  *
@@ -48,11 +51,12 @@ public class Basic {
 
     //Checks if config is properly formated
     public static boolean goodCfg() {
+        String posString = ConfigManager.getString("position").toUpperCase();
         try {
-            BlockFace.valueOf(ConfigManager.getString("position"));
+            BlockFace.valueOf(posString);
             return true;
         } catch (Exception iae) {
-            return false;
+            return posString.equals("ANY");
         }
     }
 
@@ -104,7 +108,7 @@ public class Basic {
         if (OI != null) {
             try {
                 return OI.getItemStack(name);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         if (mat != null && mat != Material.AIR) {
@@ -123,14 +127,14 @@ public class Basic {
         Iterator<String> iter = aliases.iterator();
         String alias = null;
         if (iter.hasNext()) {
-            alias = (String) iter.next();
+            alias = iter.next();
         }
         return alias;
     }
 
     //Changes the & to color code sign
     public static String colorChat(String msg) {
-        String langChar = new Character((char) 167).toString();
+        String langChar = Character.toString((char) 167);
         msg = msg.replaceAll("&", langChar);
         return msg;
     }
@@ -167,12 +171,12 @@ public class Basic {
         }
         int count = 0;
         ItemStack Items[] = inv.getContents();
-        for (int i = 0; i < Items.length; i++) {
-            if (Items[i] == null) {
+        for (ItemStack Item : Items) {
+            if (Item == null) {
                 continue;
             }
-            if (Items[i].getType() == is.getType() && ((Items[i].getDurability() == is.getDurability() || Items[i].getDurability() == -1) || !checkDurability) && Items[i].getAmount() > 0) {
-                count += Items[i].getAmount();
+            if (Item.getType() == is.getType() && ((Item.getDurability() == is.getDurability() || Item.getDurability() == -1) || !checkDurability) && Item.getAmount() > 0) {
+                count += Item.getAmount();
             }
         }
         return count;
@@ -213,7 +217,7 @@ public class Basic {
 
         }
     }
-    
+
     public static void addItemToInventory(MinecartManiaChest chest, ItemStack is, int left){
         addItemToInventory(chest.getInventory(), is, left);
     }
@@ -229,14 +233,12 @@ public class Basic {
             ArrayList<ItemStack> items = new ArrayList<ItemStack>();
             for (int i = 0; i < Math.ceil(left / maxStackSize); i++) {
                 if (left < maxStackSize) {
-                    ItemStack tmp = is;
-                    tmp.setAmount(left);
-                    items.add(tmp);
+                    is.setAmount(left);
+                    items.add(is);
                     return;
                 }else{
-                    ItemStack tmp = is;
-                    tmp.setAmount(maxStackSize);
-                    items.add(tmp);
+                    is.setAmount(maxStackSize);
+                    items.add(is);
                 }
             }
             Object[] iArray = items.toArray();
@@ -246,6 +248,38 @@ public class Basic {
         }else{
             inv.addItem(is);
         }
+    }
+
+    public static Chest findChest(Block block){
+        if(!ConfigManager.getString("position").toUpperCase().equals("ANY")){
+            Block faceBlock = block.getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
+            return (faceBlock != null && faceBlock.getType() == Material.CHEST ? (Chest) faceBlock.getState() : null);
+        }
+        for(BlockFace bf : BlockFace.values()){
+            if(block.getFace(bf) != null && block.getFace(bf).getType() == Material.CHEST){
+                return (Chest) block.getFace(bf).getState();
+            }
+        }
+        return null;
+    }
+
+    public static CraftSign findSign(Block block){
+        if(!ConfigManager.getString("position").toUpperCase().equals("ANY")){
+            BlockFace face = BlockFace.valueOf(ConfigManager.getString("position").toUpperCase());
+            int distance = ConfigManager.getInt("distance");
+            Block faceBlock = block.getRelative(face.getModX() * -distance, face.getModY() * -distance, face.getModZ() * -distance);
+            return (faceBlock != null && faceBlock.getType() == Material.SIGN || faceBlock.getType() == Material.SIGN_POST || faceBlock.getType() == Material.WALL_SIGN ? (CraftSign) faceBlock.getState() : null);
+        }
+        for(BlockFace bf : BlockFace.values()){
+            Block faceBlock = block.getFace(bf);
+            if(faceBlock != null && faceBlock.getType() == Material.SIGN || faceBlock.getType() == Material.SIGN_POST || faceBlock.getType() == Material.WALL_SIGN){
+                CraftSign sign = (CraftSign) faceBlock.getState();
+                if(SignManager.mySign(sign)){
+                    return sign;
+                }
+            }
+        }
+        return null;
     }
     
     public static boolean checkFreeSpace(MinecartManiaChest chest,ItemStack is, int left){
@@ -268,27 +302,16 @@ public class Basic {
                 left = left - maxStack;
                 continue;
             }
-            if(!curitem.getType().equals(type) || curitem.getDurability() != durability){
+            if(curitem.getType() != type || (curitem.getDurability() != durability && curitem.getDurability() != -1)){
                 continue;
             }
             int amount = curitem.getAmount();
-            int maxStackSize = curitem.getMaxStackSize();
-            if(amount < maxStackSize){
-                left = left - (maxStackSize - amount);
+            if(amount < maxStack){
+                left = left - (maxStack - amount);
             }
         }
-        if(left <= 0){
-            return true;
-        }else{
-            return false;
-        }
+        return left <= 0;
     }
-    
-    //Sends messages to players - future use
-    /*
-    public static void sendMessage(Player p, String message){
-        p.sendMessage(message);
-    }*/
     
     public static void cancelEventAndDropSign(SignChangeEvent event){
         event.setCancelled(true);

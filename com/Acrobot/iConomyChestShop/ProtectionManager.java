@@ -12,6 +12,7 @@ import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.Sign;
 import org.yi.acru.bukkit.Lockette.Lockette;
 
 /**
@@ -59,7 +60,7 @@ public class ProtectionManager {
     }
     
     public static boolean protectBlock(Block block, String name){
-        if(ConfigManager.getBoolean("LWCprotection") == false){
+        if(!ConfigManager.getBoolean("LWCprotection")){
             return false;
         }
         if(lwc != null){
@@ -72,7 +73,7 @@ public class ProtectionManager {
     
 
     public static void chestDestroy(Block chest, Player player, BlockBreakEvent event) {
-        if (cfgProtection() == false) {
+        if (!cfgProtection()) {
             return;
         }
         CraftSign sign = getSign(chest, false);
@@ -84,13 +85,11 @@ public class ProtectionManager {
         if (!sign.getLine(0).equals(player.getName())) {
             player.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
             event.setCancelled(true);
-        } else {
-            return;
         }
     }
     
     public static void chestInteract(Block chest, Player player, PlayerInteractEvent event) {
-        if (cfgProtection() == false) {
+        if (!cfgProtection()) {
             return;
         }
         CraftSign sign = getSign(chest, false);
@@ -102,8 +101,6 @@ public class ProtectionManager {
         if (!sign.getLine(0).equals(player.getName())) {
             player.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
             event.setCancelled(true);
-        } else {
-            return;
         }
     }
     
@@ -113,13 +110,13 @@ public class ProtectionManager {
             block.getFace(BlockFace.WEST),
             block.getFace(BlockFace.NORTH),
             block.getFace(BlockFace.SOUTH)};
-        
-        for(int i = 0; i < blocks.length; i++){
-            Material blockType = blocks[i].getType();
-            if(blockType.equals(Material.SIGN) || blockType.equals(Material.SIGN_POST) || blockType.equals(Material.WALL_SIGN)){
-                CraftSign s = (CraftSign) blocks[i].getState();
-                if(SignManager.mySign(s)){
-                    if(!s.getLine(0).equals(player.getName())){
+
+        for (Block block1 : blocks) {
+            Material blockType = block1.getType();
+            if (blockType.equals(Material.SIGN) || blockType.equals(Material.SIGN_POST) || blockType.equals(Material.WALL_SIGN)) {
+                CraftSign s = (CraftSign) block1.getState();
+                if (SignManager.mySign(s)) {
+                    if (!s.getLine(0).equals(player.getName())) {
                         player.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
                         event.setCancelled(true);
                     }
@@ -137,18 +134,13 @@ public class ProtectionManager {
             player.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
             event.setCancelled(true);
             s.update();
-        } else {
-            return;
         }
 
     }
 
     public static CraftSign getSign(Block chest, boolean recurency) {
-        BlockFace face = BlockFace.valueOf(ConfigManager.getString("position").toUpperCase());
-        int distance = ConfigManager.getInt("distance");
-        Block block = chest.getRelative(face.getModX() * -distance, face.getModY() * -distance, face.getModZ() * -distance);
-        if (block.getType().equals(Material.SIGN) || block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.WALL_SIGN)) {
-            CraftSign sign = (CraftSign) block.getState();
+        CraftSign sign = Basic.findSign(chest);
+        if (sign != null) {
             return sign;
         } else if (!recurency) {
             MinecartManiaChest mmc = new MinecartManiaChest((Chest) chest.getState());
@@ -162,9 +154,7 @@ public class ProtectionManager {
         } else {
             return null;
         }
-
-
-    } 
+    }
 
     public static boolean cfgProtection() {
         return ConfigManager.getBoolean("protection");

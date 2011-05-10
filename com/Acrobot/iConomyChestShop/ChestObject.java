@@ -10,8 +10,8 @@ import org.bukkit.inventory.ItemStack;
  * @author Acrobot
  */
 public class ChestObject {
-    private MinecartManiaChest main;
-    private MinecartManiaChest extended;
+    private final MinecartManiaChest main;
+    private final MinecartManiaChest extended;
     
     ChestObject(Chest main){
         this.main = new MinecartManiaChest(main);
@@ -47,6 +47,7 @@ public class ChestObject {
     public void addItem(ItemStack item, int amount){
         if(extended != null){
             doubleChest().addItem(new ItemStack(item.getType(), amount, item.getDurability()));
+            return;
         }
         main.addItem(new ItemStack(item.getType(), amount, item.getDurability()));
     }

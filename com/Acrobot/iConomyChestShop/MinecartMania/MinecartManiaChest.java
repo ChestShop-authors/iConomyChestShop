@@ -119,16 +119,13 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
         if (item.getTypeId() == Material.AIR.getId()) {
             return false;
         }
-        //Backup contents
-        ItemStack[] backup = getContents().clone();
-        ItemStack backupItem = new ItemStack(item.getTypeId(), item.getAmount(), item.getDurability());
 
         int max = item.getType().getMaxStackSize();
 
         //First attempt to merge the itemstack with existing item stacks that aren't full (< 64)
         for (int i = 0; i < size(); i++) {
             if (getItem(i) != null) {
-                if (getItem(i).getTypeId() == item.getTypeId() && getItem(i).getDurability() == item.getDurability()) {
+                if (getItem(i).getTypeId() == item.getTypeId() && (getItem(i).getDurability() == item.getDurability() || getItem(i).getDurability() == -1)) {
                     if (getItem(i).getAmount() + item.getAmount() <= max) {
                         setItem(i, new ItemStack(item.getTypeId(), getItem(i).getAmount() + item.getAmount(), item.getDurability()));
                         return true;
@@ -144,13 +141,9 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
         //Attempt to add the item to an empty slot
         int emptySlot = firstEmpty();
         int amount = item.getAmount();
-        if (emptySlot > -1) {
-            if(ConfigManager.getBoolean("stackUnstackableItems")){
-                setItem(emptySlot, item);
-            }else{
-                Basic.addItemToInventory(getInventory(), item, amount);
-            }
-            //setItem(emptySlot, item);
+        if (emptySlot > -1 && amount <= max) {
+            //Basic.addItemToInventory(this, item, amount);
+            setItem(emptySlot, item);
             update();
             return true;
         }
@@ -171,10 +164,6 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
                 setDataValue("neighbor", null);
             }
         }
-
-        //if we fail, reset the inventory and item back to previous values
-        getChest().getInventory().setContents(backup);
-        item = backupItem;
         return false;
     }
 
@@ -185,8 +174,6 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
      * @param durability of the item to remove
      */
     public boolean removeItem(int type, int amount, short durability) {
-        //Backup contents
-        ItemStack[] backup = getContents().clone();
         boolean checkDurability = true;
         if(ConfigManager.getBoolean("allowUsedItemsToBeSold") && type >= 256 && type <= 317){
             checkDurability = false;
@@ -224,10 +211,6 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
                 setDataValue("neighbor", null);
             }
         }
-
-
-        //if we fail, reset the inventory back to previous values
-        getChest().getInventory().setContents(backup);
         return false;
     }
 

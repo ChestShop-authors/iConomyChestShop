@@ -11,24 +11,26 @@ import org.bukkit.inventory.ItemStack;
 public class Shop {
     
     
-    private ChestObject chest;
-    public String owner;
-    private float buyPrice;
-    private float sellPrice;
-    public ItemStack stock;
-    public int stockAmount;
-    
-    Shop(Sign sign, ChestObject obj){
+    private final ChestObject chest;
+    public final String owner;
+    private final float buyPrice;
+    private final float sellPrice;
+    public final ItemStack stock;
+    public final int stockAmount;
+
+
+    Shop(Sign sign, ChestObject obj) {
         //this.sign = sign;
         this.chest = obj;
-        
+
         this.owner = SignManager.getOwner(sign);
         this.buyPrice = SignManager.buyPrice(sign);
         this.sellPrice = SignManager.sellPrice(sign);
         this.stock = Basic.getItemStack(sign.getLine(3).replace(":", ";"));
         this.stockAmount = SignManager.getItemAmount(sign);
     }
-    
+
+
     public float getBuyPrice(){
         return (buyPrice == -1 ? 0 : buyPrice);
     }
@@ -64,16 +66,16 @@ public class Shop {
         }
         if(!isAdminShop()){
             chest.removeItem(stock, stockAmount);
-            economyManager.add(owner, getBuyPrice());
-        }else if(economyManager.hasAccount(owner)){
-            economyManager.add(owner, getBuyPrice());
+            EconomyManager.add(owner, getBuyPrice());
+        }else if(EconomyManager.hasAccount(owner)){
+            EconomyManager.add(owner, getBuyPrice());
         }
         stock.setAmount(stockAmount);
         Basic.addItemToInventory(player.getInventory(), stock, stockAmount);
         player.updateInventory();
         
         //////////////PAYMENT////////////////
-        economyManager.substract(player.getName(), getBuyPrice());
+        EconomyManager.substract(player.getName(), getBuyPrice());
         
         ConfigManager.buyingString(stockAmount, stock.getType().name(), owner, player, getBuyPrice());
         Logging.logToDB(true, this, player);
@@ -99,16 +101,16 @@ public class Shop {
                 return false;
             }
             chest.addItem(stock, stockAmount);
-            economyManager.substract(owner, getSellPrice());
-        }else if(economyManager.hasAccount(owner)){
-            economyManager.substract(owner, getSellPrice());
+            EconomyManager.substract(owner, getSellPrice());
+        }else if(EconomyManager.hasAccount(owner)){
+            EconomyManager.substract(owner, getSellPrice());
         }
         
         Basic.removeItemStackFromInventory(player.getInventory(), stock, stockAmount);
         player.updateInventory();
         
         //////////////PAYMENT////////////////
-        economyManager.add(player.getName(), getSellPrice());
+        EconomyManager.add(player.getName(), getSellPrice());
         
         ConfigManager.sellingString(stockAmount, stock.getType().name(), owner, player, getSellPrice());
         Logging.logToDB(false, this, player);
@@ -151,6 +153,7 @@ public class Shop {
     
     private boolean playerHasFreeSpace(Player player){
         return Basic.checkFreeSpace(player.getInventory(), stock, stockAmount);
+        //return true;
     }
     
 }

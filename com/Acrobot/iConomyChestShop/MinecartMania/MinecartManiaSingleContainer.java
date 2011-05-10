@@ -1,5 +1,6 @@
 package com.Acrobot.iConomyChestShop.MinecartMania;
 
+import com.Acrobot.iConomyChestShop.Basic;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -38,10 +39,7 @@ public abstract class MinecartManiaSingleContainer implements MinecartManiaInven
     }
 
     public boolean canAddItem(ItemStack item) {
-        if (item.getTypeId() == Material.AIR.getId()) {
-            return false;
-        }
-        return true;
+        return item.getTypeId() != Material.AIR.getId();
     }
 
     /**
@@ -59,7 +57,6 @@ public abstract class MinecartManiaSingleContainer implements MinecartManiaInven
         }
         //Backup contents
         ItemStack[] backup = getContents().clone();
-        ItemStack backupItem = new ItemStack(item.getTypeId(), item.getAmount(), item.getDurability());
 
         int max = item.getType().getMaxStackSize();
 
@@ -88,7 +85,6 @@ public abstract class MinecartManiaSingleContainer implements MinecartManiaInven
 
         //if we fail, reset the inventory and item back to previous values
         setContents(backup);
-        item = backupItem;
         return false;
     }
 
@@ -247,7 +243,7 @@ public abstract class MinecartManiaSingleContainer implements MinecartManiaInven
      * @return the first slot with the given item
      */
     public int first(ItemStack item) {
-        return first(item.getTypeId(), (short) (item.getDurability() > 0 ? item.getDurability() : -1));
+        return first(item.getTypeId(), item.getDurability() > 0 ? item.getDurability() : -1);
     }
 
     /**
@@ -278,7 +274,8 @@ public abstract class MinecartManiaSingleContainer implements MinecartManiaInven
     }
 
     public int amount(ItemStack item) {
-        int count = 0;
+        return Basic.getItemAmountFromInventory(this.getInventory(), item);
+        /*int count = 0;
         int id = item.getTypeId();
         int durability = item.getDurability();
         for (int i = 0; i < size(); i++) {
@@ -291,7 +288,7 @@ public abstract class MinecartManiaSingleContainer implements MinecartManiaInven
                 }
             }
         }
-        return count;
+        return count;*/
     }
 
     /**

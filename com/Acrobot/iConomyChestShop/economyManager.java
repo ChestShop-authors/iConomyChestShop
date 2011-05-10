@@ -8,7 +8,7 @@ import cosine.boseconomy.BOSEconomy;
  *
  * @author Acrobot
  */
-public class economyManager {
+public class EconomyManager {
     private static iConomy iConomy = null;
     public static BOSEconomy BOSEconomy = null;
     
@@ -20,18 +20,13 @@ public class economyManager {
         if(iConomy != null){
             return iConomy.hasAccount(p);
         }
-        if(BOSEconomy != null){
-            return true;
-        }
-        return false;
+        return BOSEconomy != null;
     }
-    public static boolean setiConomy(iConomy plugin) {
+
+    public static void setiConomy(iConomy plugin) {
         if (iConomy == null) {
             iConomy = plugin;
-        } else {
-            return false;
         }
-        return true;
     }
     
     public static void add(String name, float amount){
@@ -60,10 +55,7 @@ public class economyManager {
             Holdings balance = iConomy.getAccount(name).getHoldings();
             return balance.hasEnough(amount);
         }
-        if(BOSEconomy != null){
-            return (BOSEconomy.getPlayerMoney(name) >= amount);
-        }
-        return false;
+        return BOSEconomy != null && (BOSEconomy.getPlayerMoney(name) >= amount);
     }
     
     public static double balance(String name){

@@ -15,14 +15,7 @@ public class PermissionManager {
         if (Permissions != null) {
             return Permissions.has(player, permission);
         } else {
-            if (permission.contains("exclude")) {
-                return false;
+            return !permission.contains("exclude") && (!permission.contains("admin") || player.isOp());
             }
-            if (permission.contains("admin")) {
-                return player.isOp();
-            } else {
-                return true;
-            }
-        }
     }
 }

@@ -25,6 +25,6 @@ public class iConomyChestShopBlockListener extends BlockListener {
         }
     }
     
-    public iConomyChestShopBlockListener(final iConomyChestShop plugin) {
+    public iConomyChestShopBlockListener() {
     }
 }

@@ -23,12 +23,12 @@ public class iConomyChestShopPluginListener extends ServerListener{
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
         //iConomy
-        if(economyManager.getiConomy() == null) {
+        if(EconomyManager.getiConomy() == null) {
             Plugin iConomy = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("iConomy");
 
             if (iConomy != null) {
                 if (iConomy.isEnabled()) {
-                    economyManager.setiConomy((iConomy) iConomy);
+                    EconomyManager.setiConomy((iConomy) iConomy);
                     PluginDescriptionFile pDesc = iConomy.getDescription();
                     System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
                 }
@@ -81,10 +81,10 @@ public class iConomyChestShopPluginListener extends ServerListener{
         }
         
         //BOSEconomy
-        if (economyManager.BOSEconomy == null) {
+        if (EconomyManager.BOSEconomy == null) {
             Plugin tmp = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("BOSEconomy");
             if (tmp != null) {
-                economyManager.BOSEconomy = (BOSEconomy) tmp;
+                EconomyManager.BOSEconomy = (BOSEconomy) tmp;
                 PluginDescriptionFile pDesc = tmp.getDescription();
                 System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
             }

@@ -1,5 +1,6 @@
 package com.Acrobot.iConomyChestShop.MinecartMania;
 
+import com.Acrobot.iConomyChestShop.Basic;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -19,14 +20,8 @@ public class MinecartManiaDoubleChest implements MinecartManiaInventory{
 	}
 	
 	public boolean equals(Location loc) {
-		if (loc.equals(chest1.getLocation())) {
-			return true;
-		}
-		if (loc.equals(chest2.getLocation())) {
-			return true;
-		}
-		return false;
-	}
+        return loc.equals(chest1.getLocation()) || loc.equals(chest2.getLocation());
+    }
 	
 	public boolean canAddItem(ItemStack item) {
 		return chest1.canAddItem(item) || chest2.canAddItem(item);
@@ -189,7 +184,7 @@ public class MinecartManiaDoubleChest implements MinecartManiaInventory{
 	 * @return the first slot with the given item
 	 */
 	public int first(ItemStack item) {
-		return first(item.getTypeId(), (short) (item.getDurability() > 0 ? item.getData() : -1));
+		return first(item.getTypeId(), item.getDurability() > 0 ? item.getDurability() : -1);
 	}
 
 	/**
@@ -268,9 +263,9 @@ public class MinecartManiaDoubleChest implements MinecartManiaInventory{
 	public boolean contains(int type, short durability) {
 		return chest1.contains(type, durability) || chest2.contains(type, durability);
 	}
-        
-        public int amount(ItemStack item){
-            return chest1.amount(item) + chest2.amount(item);
-        }
+
+    public int amount(ItemStack item) {
+        return Basic.getItemAmountFromInventory(chest1.getInventory(), item) + Basic.getItemAmountFromInventory(chest2.getInventory(), item);
+    }
 
 }

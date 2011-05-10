@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
  */
 public class Logging implements Runnable{
     private static final Logger logger = Logger.getLogger("Minecraft.iConomyChestShop");
-    private static iConomyChestShop plugin;
+    public static iConomyChestShop plugin;
     
     public static void setPlugin(iConomyChestShop ics){
         plugin = ics;
@@ -48,7 +48,7 @@ public class Logging implements Runnable{
         logToDB(playerBuysFromShop, shop.owner, player.getName(), shop.stock.getTypeId(), shop.stock.getDurability(), shop.stockAmount, (playerBuysFromShop ? shop.getBuyPrice() : shop.getSellPrice()));
         if (ConfigManager.getBoolean("log")) {
             Logging.log(player.getName() + (playerBuysFromShop ? " bought " : " sold ") + shop.stockAmount + " " + shop.stock.getType() + " with durability of "
-                    + shop.stock.getDurability() + (playerBuysFromShop ? " from " : " to ") + shop.owner + " for " + economyManager.formatedBalance((playerBuysFromShop ? shop.getBuyPrice() : shop.getSellPrice())));
+                    + shop.stock.getDurability() + (playerBuysFromShop ? " from " : " to ") + shop.owner + " for " + EconomyManager.formatedBalance((playerBuysFromShop ? shop.getBuyPrice() : shop.getSellPrice())));
         }
     }
     public static void logToDB(boolean playerBuysFromShop, String shopOwnerName, String user, int itemID, int itemDurability, int amount, float price){
@@ -58,7 +58,6 @@ public class Logging implements Runnable{
         long time = System.currentTimeMillis()/1000;
         plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Logging());
         
-        EbeanServer db = plugin.getDatabase();
         
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
@@ -70,7 +69,7 @@ public class Logging implements Runnable{
         transaction.setShopUser(user);
         transaction.setPrice(price);
         
-        db.save(transaction);
+        DBqueue.addToQueue(transaction);
     }
     public static void removeOld(long time){
         EbeanServer database = plugin.getDatabase();

@@ -102,7 +102,7 @@ public class MinecartManiaWorld {
 	 public static int getIntValue(Object o) {
 		 if (o != null) {
 			if (o instanceof Integer) {
-				return ((Integer)o).intValue();
+				return (Integer) o;
 			}
 		}
 		return 0;
@@ -111,7 +111,7 @@ public class MinecartManiaWorld {
 	 public static double getDoubleValue(Object o) {
 		 if (o != null) {
 			if (o instanceof Double) {
-				return ((Double)o).doubleValue();
+				return (Double) o;
 			}
 			//Attempt integer value
 			return getIntValue(o);
@@ -135,8 +135,7 @@ public class MinecartManiaWorld {
 	public static boolean isKeepMinecartsLoaded() {
 		Object o = getConfigurationValue("KeepMinecartsLoaded");
 		if (o != null) {
-			Boolean value = (Boolean)o;
-			return value.booleanValue();
+            return (Boolean)o;
 		}
 		return false;
 	}
@@ -144,8 +143,7 @@ public class MinecartManiaWorld {
 	public static boolean isMinecartsKillMobs() {
 		Object o = getConfigurationValue("MinecartsKillMobs");
 		if (o != null) {
-			Boolean value = (Boolean)o;
-			return value.booleanValue();
+            return (Boolean)o;
 		}
 		return true;
 	}
@@ -153,8 +151,7 @@ public class MinecartManiaWorld {
 	public static boolean isReturnMinecartToOwner() {
 		Object o = getConfigurationValue("MinecartsReturnToOwner");
 		if (o != null) {
-			Boolean value = (Boolean)o;
-			return value.booleanValue();
+            return (Boolean)o;
 		}
 		return true;
 	}

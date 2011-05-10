@@ -19,7 +19,6 @@ public class StatGenerator implements Runnable{
     private static String header = fileToString("header");
     private static String footer = fileToString("footer");
     private static boolean unusedItems = ConfigManager.getBoolean("showUnusedItemsInGeneratedList");
-    private static FileWriter fileWriter;
     private static BufferedWriter buf;
     
     public static void setPlugin(iConomyChestShop plugin){
@@ -102,8 +101,7 @@ public class StatGenerator implements Runnable{
                     .replace("%pricePerItem", buyPrice + ""));
             
             
-        } catch (Exception e){
-            return;
+        } catch (Exception ignored){
         }
     }
     public static void fileStart() throws IOException{
@@ -121,8 +119,8 @@ public class StatGenerator implements Runnable{
             time = System.currentTimeMillis();
             plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Logging());
             fileStart();
-            
-            fileWriter = new FileWriter("plugins/iConomyChestShop/ChestShop.stats.html", true);
+
+            FileWriter fileWriter = new FileWriter("plugins/iConomyChestShop/ChestShop.stats.html", true);
             buf = new BufferedWriter(fileWriter);
             
             for (Material m : Material.values()) {
@@ -131,8 +129,7 @@ public class StatGenerator implements Runnable{
             buf.close();
             time = System.currentTimeMillis() - time;
             fileEnd();
-        } catch (Exception e) {
-            return;
+        } catch (Exception ignored) {
         }
     }
     public static String fileToString(String fileName) {
@@ -147,7 +144,6 @@ public class StatGenerator implements Runnable{
         }
     }
     
-    @Override
     public void run(){
         generateStatistics();
     }

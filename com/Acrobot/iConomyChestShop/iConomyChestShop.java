@@ -26,8 +26,8 @@ import org.bukkit.plugin.PluginManager;
  * @author Acrobot
  */
 public class iConomyChestShop extends JavaPlugin {
-    private final iConomyChestShopPlayerListener playerListener = new iConomyChestShopPlayerListener(this);
-    private final iConomyChestShopBlockListener blockListener = new iConomyChestShopBlockListener(this);
+    private final iConomyChestShopPlayerListener playerListener = new iConomyChestShopPlayerListener();
+    private final iConomyChestShopBlockListener blockListener = new iConomyChestShopBlockListener();
     private final iConomyChestShopPluginListener pluginListener = new iConomyChestShopPluginListener();
     private final SignManager signManager = new SignManager();
     private final iConomyChestShopBlockBreak blockBreakListener = new iConomyChestShopBlockBreak();
@@ -48,13 +48,17 @@ public class iConomyChestShop extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Highest, this);
         
         PluginDescriptionFile pdfFile = this.getDescription();
+
+        setupDatabaseFile(); //To prevent errors.
+        ConfigManager.load();
         int interval;
+
         if(ConfigManager.getBoolean("useDB")){
-            setupDatabaseFile(); //DB stuff
-            setupDatabase();
+            setupDatabase(); //DB stuff
             if((interval = ConfigManager.getInt("intervalBetweenGeneratingTransactionList")) == 0){
                 interval = 300;
             }
+            getServer().getScheduler().scheduleAsyncRepeatingTask(this, new DBqueue(), 20L * 10, 20L * 10);
             if(ConfigManager.getBoolean("generateTransactionList")){
                 getServer().getScheduler().scheduleAsyncRepeatingTask(this, new StatGenerator(), 20L * interval, 20L * interval);
             }
@@ -63,6 +67,7 @@ public class iConomyChestShop extends JavaPlugin {
             interval = 300;
         }
         iConomyChestShopPlayerListener.interval = interval;
+        
         Logging.setPlugin(this);
         StatGenerator.setPlugin(this);
         
@@ -158,7 +163,7 @@ public class iConomyChestShop extends JavaPlugin {
                     player.sendMessage("[Permissions]" + ChatColor.RED.toString() + " You can't see item informations!");
                     return true;
                 }
-                Material mat = null;
+                Material mat;
                 String dmgValue = "";
                 if (args.length == 0) {
                     ItemStack itemInHand = player.getItemInHand();
@@ -189,13 +194,9 @@ public class iConomyChestShop extends JavaPlugin {
                 String othernames = "";
                 if (Basic.OI != null) {
                     Set<String> aliases = Basic.OI.getAliases(mat.getId() + dmgValue.replace(":", ";"));
-                    Iterator<String> iter = aliases.iterator();
-                    //int loops = 0;
-                    while (iter.hasNext()) {
-                        //loops++;
-                        Object obj = iter.next();
-                        if (!(obj + "").equalsIgnoreCase(mat.name()) && !Basic.isInt(obj+"")) {
-                                othernames += ", " + obj;
+                    for (String alias : aliases) {
+                        if (!(alias + "").equalsIgnoreCase(mat.name()) && !Basic.isInt(alias + "")) {
+                            othernames += ", " + alias;
                         }
                     }
                 }
@@ -214,9 +215,15 @@ public class iConomyChestShop extends JavaPlugin {
         return Server;
     }
     
+    public static iConomyChestShop getPlugin(){
+        return Logging.plugin;
+    }
+    
     public void onDisable() {
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println("[" + pdfFile.getName() + "]"  + " version " + pdfFile.getVersion() + " distabled!");
+        
+        DBqueue.saveQueueOnExit();
     }
 }
 

@@ -25,7 +25,7 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         Player player = event.getPlayer();
         String playerName = player.getName();
         if(userTime.containsKey(playerName)){
-            if((System.currentTimeMillis() - userTime.get(playerName).longValue()) < interval){
+            if((System.currentTimeMillis() - userTime.get(playerName)) < interval){
                 player.sendMessage(ConfigManager.getLanguage("wait"));
                 return;
             }
@@ -54,7 +54,7 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         }
         Sign sign = (Sign) event.getClickedBlock().getState();
         String name = sign.getLine(0);
-        if (economyManager.getiConomy() == null && economyManager.BOSEconomy == null) {
+        if (EconomyManager.getiConomy() == null && EconomyManager.BOSEconomy == null) {
             System.out.println("[iConomyChestShop] No economy plugin found!");
             player.sendMessage("[iConomyChestShop] No economy plugin found!");
             return;
@@ -63,15 +63,14 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
             player.sendMessage("[iConomyChestShop] Aborting!");
             return;
         }
-        if (!(clickedBlock.getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance")).getType() == Material.CHEST) && !name.toLowerCase().replace(" ", "").equals("adminshop")) {
+        if (Basic.findChest(clickedBlock) == null && !name.toLowerCase().replace(" ", "").equals("adminshop")) {
             return;
         }
         if (!SignManager.mySign(sign)) {
             return;
         }
-        
         if (!name.toLowerCase().replace(" ", "").equals("adminshop")) {
-            if (!economyManager.hasAccount(name)) {
+            if (!EconomyManager.hasAccount(name)) {
                 player.sendMessage(ConfigManager.getLanguage("Seller_has_no_account"));
                 return;
             }
@@ -109,6 +108,6 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         return true;
     }
 
-    public iConomyChestShopPlayerListener(iConomyChestShop instance) {
+    public iConomyChestShopPlayerListener() {
     }
 }

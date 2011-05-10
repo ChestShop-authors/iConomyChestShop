@@ -19,20 +19,11 @@ public class ShopManager extends PlayerListener {
     public static void transaction(PlayerInteractEvent event) {
         boolean reverseButtons = ConfigManager.getBoolean("reverseButtons");
         Sign sign = (Sign) event.getClickedBlock().getState();
-        Block chestBlock = event.getClickedBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
+        Chest chest = Basic.findChest(event.getClickedBlock());
         Player player = event.getPlayer();
         boolean adminShop = sign.getLine(0).toLowerCase().replace(" ", "").equals("adminshop");
 
-        if (!chestBlock.getType().equals(Material.CHEST) && !adminShop) {
-            return;
-        }
-        Shop shop;
-        if (!adminShop) {
-            ChestObject chest = new ChestObject((Chest) chestBlock.getState());
-            shop = new Shop(sign, chest);
-        } else {
-            shop = new Shop(sign, null);
-        }
+        Shop shop = new Shop(sign, (!adminShop ? new ChestObject(chest) : null));
 
         Action action = event.getAction();
 
@@ -66,26 +57,26 @@ public class ShopManager extends PlayerListener {
     }
 
     public static void buy(Shop shop, Player player) {
-        if (!economyManager.hasEnough(player.getName(), shop.getBuyPrice())) {
+        if (!EconomyManager.hasEnough(player.getName(), shop.getBuyPrice())) {
             player.sendMessage(ConfigManager.getLanguage("You_have_got_not_enough_money"));
             return;
         }
         boolean OK = shop.buy(player);
 
         if (!OK) {
-            return;
+            //You couldn't buy
         }
     }
 
     public static void sell(Shop shop, Player player) {
-        if (economyManager.hasAccount(shop.owner) && !economyManager.hasEnough(shop.owner, shop.getSellPrice())) {
+        if (EconomyManager.hasAccount(shop.owner) && !EconomyManager.hasEnough(shop.owner, shop.getSellPrice())) {
             player.sendMessage(ConfigManager.getLanguage("Seller_has_not_enough_money"));
             return;
         }
         boolean OK = shop.sell(player);
 
         if (!OK) {
-            return;
+            //You couldn't sell
         }
     }
 }
