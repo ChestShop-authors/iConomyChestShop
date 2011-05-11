@@ -201,11 +201,12 @@ public class Basic {
                 continue;
             }
             if (curItem.getType() == is.getType() && ((curItem.getDurability() == is.getDurability() || curItem.getDurability() == -1) || !checkDurability)) {
-                if (curItem.getAmount() > left) {
-                    curItem.setAmount(curItem.getAmount() - left);
-                    left -= curItem.getAmount();
+                int toRemove = left;
+                left -= curItem.getAmount();
+                
+                if (curItem.getAmount() > toRemove) {
+                    curItem.setAmount(curItem.getAmount() - toRemove);
                 } else {
-                    left -= curItem.getAmount();
                     curItem = null;
                 }
             }

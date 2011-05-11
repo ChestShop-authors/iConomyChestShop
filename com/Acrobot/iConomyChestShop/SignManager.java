@@ -55,9 +55,6 @@ public class SignManager extends BlockListener {
                 return;
             }
             if (isGoodSign) {
-                if (!(!text[0].equals("") && isAdmin)) {
-                    event.setLine(0, playerName);
-                }
                 if (chest != null) {
                     if(!isAdmin){
                         Block ChestB = chest.getBlock();
@@ -92,9 +89,15 @@ public class SignManager extends BlockListener {
                         }
                     }
                 } else if (!text[0].toLowerCase().replace(" ", "").equals("adminshop")) {
+                    if(ConfigManager.getBoolean("doNotRemoveSignIfNotCorrect")){
+                        return;
+                    }
                     Basic.cancelEventAndDropSign(event);
                     p.sendMessage(ConfigManager.getLanguage("Shop_cannot_be_created"));
                     return;
+                }
+                if (!(!text[0].equals("") && isAdmin)) {
+                    event.setLine(0, playerName);
                 }
                 if (priceIsNegative(text[2])) {
                     Basic.cancelEventAndDropSign(event);

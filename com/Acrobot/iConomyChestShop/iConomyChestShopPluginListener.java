@@ -1,11 +1,10 @@
 package com.Acrobot.iConomyChestShop;
 
 import com.griefcraft.lwc.LWCPlugin;
-import com.iConomy.iConomy;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import cosine.boseconomy.BOSEconomy;
+import com.iConomy.*;
 import info.somethingodd.bukkit.OddItem.OddItem;
-
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 import org.bukkit.plugin.Plugin;
