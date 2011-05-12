@@ -1,5 +1,7 @@
 package com.Acrobot.iConomyChestShop;
 
+import com.Acrobot.iConomyChestShop.Chests.ChestObject;
+import com.Acrobot.iConomyChestShop.Chests.MinecraftChest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -67,8 +69,11 @@ public class Shop {
         if(!isAdminShop()){
             chest.removeItem(stock, stockAmount);
             EconomyManager.add(owner, getBuyPrice());
-        }else if(EconomyManager.hasAccount(owner)){
-            EconomyManager.add(owner, getBuyPrice());
+        }else{
+            String account = ConfigManager.getString("serverAccountName");
+            if(!account.equals("") && EconomyManager.hasAccount(account)){
+                EconomyManager.add(account, getSellPrice());
+            }
         }
         stock.setAmount(stockAmount);
         Basic.addItemToInventory(player.getInventory(), stock, stockAmount);
@@ -102,8 +107,11 @@ public class Shop {
             }
             chest.addItem(stock, stockAmount);
             EconomyManager.substract(owner, getSellPrice());
-        }else if(EconomyManager.hasAccount(owner)){
-            EconomyManager.substract(owner, getSellPrice());
+        }else{
+            String account = ConfigManager.getString("serverAccountName");
+            if(!account.equals("") && EconomyManager.hasAccount(account)){
+                EconomyManager.substract(account, getSellPrice());
+            }
         }
         
         Basic.removeItemStackFromInventory(player.getInventory(), stock, stockAmount);
@@ -119,6 +127,14 @@ public class Shop {
     
     public boolean isAdminShop(){
         return owner.toLowerCase().replace(" ", "").equals("adminshop");
+    }
+
+    public String shopOwnerName(){
+        if(isAdminShop()){
+            return ConfigManager.getString("serverAccountName");
+        }else{
+            return owner;
+        }
     }
     ////////////////////////////////////////////////////
     
@@ -148,7 +164,7 @@ public class Shop {
     }
     
     private boolean hasFreeSpace(){
-        return chest.hasFreeSpace(stock, stockAmount);
+        return chest.fits(stock, stockAmount);
     }
     
     private boolean playerHasFreeSpace(Player player){

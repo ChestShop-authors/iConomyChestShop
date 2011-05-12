@@ -1,5 +1,6 @@
 package com.Acrobot.iConomyChestShop;
 
+import com.Acrobot.iConomyChestShop.Chests.MinecraftChest;
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
 import info.somethingodd.bukkit.OddItem.OddItem;
 import java.io.File;
@@ -166,14 +167,17 @@ public class Basic {
 
     //What do I even have to say?
     public static int getItemAmountFromInventory(Inventory inv, ItemStack is) {
+        return getItemAmount(inv.getContents(), is);
+    }
+
+    public static int getItemAmount(ItemStack[] items, ItemStack is){
         int id = is.getTypeId();
         boolean checkDurability = true;
         if(ConfigManager.getBoolean("allowUsedItemsToBeSold") && id >= 256 && id <= 317){
             checkDurability = false;
         }
         int count = 0;
-        ItemStack Items[] = inv.getContents();
-        for (ItemStack Item : Items) {
+        for (ItemStack Item : items) {
             if (Item == null) {
                 continue;
             }
@@ -224,6 +228,7 @@ public class Basic {
     public static void addItemToInventory(MinecartManiaChest chest, ItemStack is, int left){
         addItemToInventory(chest.getInventory(), is, left);
     }
+
     //Adds item to inventory
     public static void addItemToInventory(Inventory inv, ItemStack is, int left){
         int maxStackSize = is.getType().getMaxStackSize();
@@ -253,14 +258,14 @@ public class Basic {
         }
     }
 
-    public static Chest findChest(Block block){
+    public static MinecraftChest findChest(Block block){
         if(!ConfigManager.getString("position").toUpperCase().equals("ANY")){
             Block faceBlock = block.getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
-            return (faceBlock != null && faceBlock.getType() == Material.CHEST ? (Chest) faceBlock.getState() : null);
+            return (faceBlock != null && faceBlock.getType() == Material.CHEST ? new MinecraftChest((Chest) faceBlock.getState()) : null);
         }
         for(BlockFace bf : BlockFace.values()){
             if(block.getFace(bf) != null && block.getFace(bf).getType() == Material.CHEST){
-                return (Chest) block.getFace(bf).getState();
+                return new MinecraftChest((Chest) block.getFace(bf).getState());
             }
         }
         return null;
@@ -292,15 +297,16 @@ public class Basic {
     
     //Checks if there is enough free space in inventory
     public static boolean checkFreeSpace(Inventory inv, ItemStack is, int left){
-        ItemStack[] contents = inv.getContents();
+        return checkFreeSpace(inv.getContents(), is, left);
+    }
+    public static boolean checkFreeSpace(ItemStack[] contents, ItemStack is, int left){
         Material type = is.getType();
         short durability = is.getDurability();
         int maxStack = is.getType().getMaxStackSize();
-        for(int i=0; i < inv.getSize(); i++){
+        for(ItemStack curitem : contents){
             if(left <= 0){
                 return true;
             }
-            ItemStack curitem = contents[i];
             if(curitem == null){
                 left = left - maxStack;
                 continue;

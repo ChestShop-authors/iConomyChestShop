@@ -19,6 +19,7 @@ public class StatGenerator implements Runnable{
     private static String header = fileToString("header");
     private static String footer = fileToString("footer");
     private static boolean unusedItems = ConfigManager.getBoolean("showUnusedItemsInGeneratedList");
+    private static String filePath = ConfigManager.getString("generatedTransactionListPath");
     private static BufferedWriter buf;
     
     public static void setPlugin(iConomyChestShop plugin){
@@ -105,12 +106,12 @@ public class StatGenerator implements Runnable{
         }
     }
     public static void fileStart() throws IOException{
-        FileWriter fw = new FileWriter("plugins/iConomyChestShop/ChestShop.stats.html");
+        FileWriter fw = new FileWriter(filePath);
         fw.write(header);
         fw.close();
     }
     public static void fileEnd() throws IOException{
-        FileWriter fw = new FileWriter("plugins/iConomyChestShop/ChestShop.stats.html", true);
+        FileWriter fw = new FileWriter(filePath, true);
         fw.write(footer.replace("%time", time + ""));
         fw.close();
     }
@@ -120,7 +121,7 @@ public class StatGenerator implements Runnable{
             plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Logging());
             fileStart();
 
-            FileWriter fileWriter = new FileWriter("plugins/iConomyChestShop/ChestShop.stats.html", true);
+            FileWriter fileWriter = new FileWriter(filePath, true);
             buf = new BufferedWriter(fileWriter);
             
             for (Material m : Material.values()) {

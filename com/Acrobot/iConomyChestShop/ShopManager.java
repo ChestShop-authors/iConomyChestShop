@@ -1,9 +1,7 @@
 package com.Acrobot.iConomyChestShop;
 
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
+import com.Acrobot.iConomyChestShop.Chests.ChestObject;
+import com.Acrobot.iConomyChestShop.Chests.MinecraftChest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -19,11 +17,10 @@ public class ShopManager extends PlayerListener {
     public static void transaction(PlayerInteractEvent event) {
         boolean reverseButtons = ConfigManager.getBoolean("reverseButtons");
         Sign sign = (Sign) event.getClickedBlock().getState();
-        Chest chest = Basic.findChest(event.getClickedBlock());
         Player player = event.getPlayer();
         boolean adminShop = sign.getLine(0).toLowerCase().replace(" ", "").equals("adminshop");
 
-        Shop shop = new Shop(sign, (!adminShop ? new ChestObject(chest) : null));
+        Shop shop = new Shop(sign, (!adminShop ? Basic.findChest(event.getClickedBlock()) : null));
 
         Action action = event.getAction();
 
@@ -69,7 +66,7 @@ public class ShopManager extends PlayerListener {
     }
 
     public static void sell(Shop shop, Player player) {
-        if (EconomyManager.hasAccount(shop.owner) && !EconomyManager.hasEnough(shop.owner, shop.getSellPrice())) {
+        if (EconomyManager.hasAccount(shop.shopOwnerName()) && !EconomyManager.hasEnough(shop.shopOwnerName(), shop.getSellPrice())) {
             player.sendMessage(ConfigManager.getLanguage("Seller_has_not_enough_money"));
             return;
         }

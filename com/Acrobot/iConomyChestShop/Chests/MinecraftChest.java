@@ -1,5 +1,6 @@
-package com.Acrobot.iConomyChestShop;
+package com.Acrobot.iConomyChestShop.Chests;
 
+import com.Acrobot.iConomyChestShop.Basic;
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaDoubleChest;
 import org.bukkit.block.Chest;
@@ -9,18 +10,23 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author Acrobot
  */
-public class ChestObject {
-    private final MinecartManiaChest main;
-    private final MinecartManiaChest extended;
+public class MinecraftChest implements ChestObject{
+    public final MinecartManiaChest main;
+    public final MinecartManiaChest extended;
     
-    ChestObject(Chest main){
+    public MinecraftChest(Chest main){
         this.main = new MinecartManiaChest(main);
         this.extended = this.main.getNeighborChest();
+    }
+
+    public boolean exists(){
+        return main != null;
     }
     
     private MinecartManiaDoubleChest doubleChest(){
         return new MinecartManiaDoubleChest(main, extended);
     }
+    
     public ItemStack[] getContents(){
         if(extended != null){
             return doubleChest().getContents();
@@ -71,7 +77,7 @@ public class ChestObject {
         return amount(item) >= amount;
     }
     
-    public boolean hasFreeSpace(ItemStack item, int amount){
+    public boolean fits(ItemStack item, int amount){
         if(extended != null){
             return Basic.checkFreeSpace(main, item, amount) || Basic.checkFreeSpace(extended, item, amount);
         }

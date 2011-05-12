@@ -1,10 +1,10 @@
 package com.Acrobot.iConomyChestShop;
 
 import java.util.HashMap;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -54,7 +54,7 @@ public class iConomyChestShopPlayerListener extends PlayerListener {
         }
         Sign sign = (Sign) event.getClickedBlock().getState();
         String name = sign.getLine(0);
-        if (EconomyManager.getiConomy() == null && EconomyManager.BOSEconomy == null) {
+        if (EconomyManager.economy == null) {
             System.out.println("[iConomyChestShop] No economy plugin found!");
             player.sendMessage("[iConomyChestShop] No economy plugin found!");
             return;

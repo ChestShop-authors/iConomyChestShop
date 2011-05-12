@@ -72,6 +72,7 @@ public class MinecartManiaChest extends MinecartManiaSingleContainer implements 
      * @param x coordinate to search
      * @param y coordinate to search
      * @param z coordinate to search
+     * @return neighbor chest
      */
     public static MinecartManiaChest getNeighborChest(World w, int x, int y, int z) {
         if (MinecartManiaWorld.getBlockAt(w, x - 1, y, z).getTypeId() == Material.CHEST.getId()) {

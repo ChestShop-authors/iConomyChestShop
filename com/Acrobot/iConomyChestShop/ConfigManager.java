@@ -45,7 +45,7 @@ public class ConfigManager {
         String str = getLanguage("You_bought_items");
         str = str.replace("<amount>", amount + "");
         str = str.replace("<item>", item);
-        str = str.replace("<owner>", owner);
+        str = str.replace("<owner>", owner.replace("[", ""));
         str = str.replace("<cost>", formattedBalance(cost));
 
         player.sendMessage(str);
@@ -60,7 +60,7 @@ public class ConfigManager {
         String str = getLanguage("You_sold_items");
         str = str.replace("<amount>", amount + "");
         str = str.replace("<item>", item);
-        str = str.replace("<owner>", owner);
+        str = str.replace("<owner>", owner.replace("[", ""));
         str = str.replace("<cost>", formattedBalance(cost));
 
         player.sendMessage(str);

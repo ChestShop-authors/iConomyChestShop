@@ -1,6 +1,8 @@
 package com.Acrobot.iConomyChestShop;
 
+import com.Acrobot.iConomyChestShop.Chests.MinecraftChest;
 import com.Acrobot.iConomyChestShop.MinecartMania.MinecartManiaChest;
+import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import net.minecraft.server.EntityPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,21 +45,21 @@ public class SignManager extends BlockListener {
         }
 
         String text[] = event.getLines();
-        Chest chest = Basic.findChest(block);//event.getBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
+        MinecraftChest chest = Basic.findChest(block);//event.getBlock().getFace(BlockFace.valueOf(ConfigManager.getString("position").toUpperCase()), ConfigManager.getInt("distance"));
 
         if (Basic.isInt(text[1])) {
             String split[] = text[2].split(":");
             boolean isFormated = mySign(text);
             boolean isGoodSign;
             try {
-                isGoodSign = (!text[0].contains("[") && !text[0].contains("]") && (split.length == 2 ? (Basic.isFloat(split[0]) && Basic.isFloat(split[1])) : Basic.isFloat(text[2]))) || isFormated;
+                isGoodSign = (!text[0].contains("[") && (split.length == 2 ? (Basic.isFloat(split[0]) && Basic.isFloat(split[1])) : Basic.isFloat(text[2]))) || isFormated;
             } catch (Exception ex) {
                 return;
             }
             if (isGoodSign) {
                 if (chest != null) {
                     if(!isAdmin){
-                        Block ChestB = chest.getBlock();
+                        Block ChestB = chest.main.getChest().getBlock();
                         CraftSign sign;
                         if((sign = ProtectionManager.getSign(ChestB, false)) != null){
                             if(!sign.getLine(0).equals(p.getName())){
@@ -75,10 +77,8 @@ public class SignManager extends BlockListener {
                                 }
                             }
                         }
-                        MinecartManiaChest mmc = new MinecartManiaChest(chest);
-                        MinecartManiaChest neighbor = mmc.getNeighborChest();
-                        if (neighbor != null) {
-                            CraftSign sig = ProtectionManager.getSign(neighbor.getChest().getBlock(), true);
+                        if (chest.extended != null) {
+                            CraftSign sig = ProtectionManager.getSign(chest.extended.getChest().getBlock(), true);
                             if (sig != null) {
                                 if (!sig.getLine(0).equals(playerName) && !isAdmin) {
                                     p.sendMessage(ConfigManager.getLanguage("You_tried_to_steal"));
@@ -89,14 +89,14 @@ public class SignManager extends BlockListener {
                         }
                     }
                 } else if (!text[0].toLowerCase().replace(" ", "").equals("adminshop")) {
-                    if(ConfigManager.getBoolean("doNotRemoveSignIfNotCorrect")){
+                    if (ConfigManager.getBoolean("doNotRemoveSignIfNotCorrect")) {
                         return;
                     }
                     Basic.cancelEventAndDropSign(event);
                     p.sendMessage(ConfigManager.getLanguage("Shop_cannot_be_created"));
                     return;
                 }
-                if (!(!text[0].equals("") && isAdmin)) {
+                if (!(!text[0].equals("") && !text[0].startsWith("[") && isAdmin)) {
                     event.setLine(0, playerName);
                 }
                 if (priceIsNegative(text[2])) {
@@ -147,7 +147,6 @@ public class SignManager extends BlockListener {
                     if (alias != null) {
                         event.setLine(3, alias);
                     }
-
                 }
                 if ((text[2].length() > 11 && !isFormated) || text[1].length() > 15) {
                     Basic.cancelEventAndDropSign(event);
@@ -161,7 +160,7 @@ public class SignManager extends BlockListener {
                     ProtectionManager.protectBlock(block, text[0]);
                 }
                 if (chest != null) {
-                    Block ChestB = chest.getBlock();
+                    Block ChestB = chest.main.getChest().getBlock();
                     if (ProtectionManager.protectBlock(ChestB, text[0])) {
                         p.sendMessage(ConfigManager.getLanguage("Shop_was_LWC_protected"));
                     }
@@ -189,7 +188,7 @@ public class SignManager extends BlockListener {
     public static boolean mySign(String text[]) {
         try {
             String textToParse = text[2].replace(" ", "");
-            return (textToParse.contains("S") || textToParse.contains("B")) && !text[3].isEmpty() && Basic.isInt(text[1]) && !text[0].contains("[") && !text[0].contains("]");
+            return (textToParse.contains("S") || textToParse.contains("B")) && !text[3].isEmpty() && Basic.isInt(text[1]) && !text[0].contains("[");
         } catch (Exception ex) {
             return false;
         }

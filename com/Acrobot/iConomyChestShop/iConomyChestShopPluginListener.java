@@ -2,8 +2,7 @@ package com.Acrobot.iConomyChestShop;
 
 import com.griefcraft.lwc.LWCPlugin;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import cosine.boseconomy.BOSEconomy;
-import com.iConomy.*;
+import com.nijikokun.register.payment.Methods;
 import info.somethingodd.bukkit.OddItem.OddItem;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
@@ -17,19 +16,17 @@ import org.yi.acru.bukkit.Lockette.Lockette;
  */
 public class iConomyChestShopPluginListener extends ServerListener{
 
+    private Methods Methods = new Methods();
     public iConomyChestShopPluginListener()  { }
     
     @Override
     public void onPluginEnable(PluginEnableEvent event) {
-        //iConomy
-        if(EconomyManager.getiConomy() == null) {
-            Plugin iConomy = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("iConomy");
-            if (iConomy != null) {
-                if (iConomy.isEnabled()) {
-                    EconomyManager.setiConomy((iConomy) iConomy);
-                    PluginDescriptionFile pDesc = iConomy.getDescription();
-                    System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
-                }
+
+        //Economy plugins
+        if(!this.Methods.hasMethod()){
+            if(this.Methods.setMethod(event.getPlugin())){
+                EconomyManager.economy = this.Methods.getMethod();
+                System.out.println("[iConomyChestShop] " + EconomyManager.economy.getName() + " version " + EconomyManager.economy.getVersion() + " loaded.");
             }
         }
 
@@ -38,7 +35,7 @@ public class iConomyChestShopPluginListener extends ServerListener{
             Plugin permissions = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("Permissions");
 
             if (permissions != null) {
-                iConomyChestShop.getBukkitServer().getPluginManager().enablePlugin(permissions);
+                //iConomyChestShop.getBukkitServer().getPluginManager().enablePlugin(permissions);
                 PermissionManager.Permissions = ((Permissions) permissions).getHandler();
                 PluginDescriptionFile pDesc = permissions.getDescription();
                 System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
@@ -74,16 +71,6 @@ public class iConomyChestShopPluginListener extends ServerListener{
             if (lockette != null) {
                 PluginDescriptionFile pDesc = lockette.getDescription();
                 ProtectionManager.lockette = ((Lockette) lockette);
-                System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
-            }
-        }
-        
-        //BOSEconomy
-        if (EconomyManager.BOSEconomy == null) {
-            Plugin tmp = iConomyChestShop.getBukkitServer().getPluginManager().getPlugin("BOSEconomy");
-            if (tmp != null) {
-                EconomyManager.BOSEconomy = (BOSEconomy) tmp;
-                PluginDescriptionFile pDesc = tmp.getDescription();
                 System.out.println("[iConomyChestShop] " + pDesc.getName() + " version " + pDesc.getVersion() + " loaded.");
             }
         }
