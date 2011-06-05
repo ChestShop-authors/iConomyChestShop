@@ -219,10 +219,10 @@ public class iConomyChestShop extends JavaPlugin {
     }
     
     public void onDisable() {
+        DBqueue.saveQueueOnExit();
+        this.getServer().getScheduler().cancelAllTasks();
         PluginDescriptionFile pdfFile = this.getDescription();
         System.out.println("[" + pdfFile.getName() + "]"  + " version " + pdfFile.getVersion() + " distabled!");
-        
-        DBqueue.saveQueueOnExit();
     }
 }
 

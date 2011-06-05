@@ -2,6 +2,8 @@ package com.Acrobot.iConomyChestShop;
 
 import com.Acrobot.iConomyChestShop.Chests.ChestObject;
 import com.Acrobot.iConomyChestShop.Chests.MinecraftChest;
+
+import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -71,12 +73,14 @@ public class Shop {
             EconomyManager.add(owner, getBuyPrice());
         }else{
             String account = ConfigManager.getString("serverAccountName");
-            if(!account.equals("") && EconomyManager.hasAccount(account)){
+            if(account != null && EconomyManager.hasAccount(account)){
                 EconomyManager.add(account, getSellPrice());
             }
         }
         stock.setAmount(stockAmount);
         Basic.addItemToInventory(player.getInventory(), stock, stockAmount);
+        
+        //player.getInventory().addItem(stock);
         player.updateInventory();
         
         //////////////PAYMENT////////////////
@@ -109,7 +113,7 @@ public class Shop {
             EconomyManager.substract(owner, getSellPrice());
         }else{
             String account = ConfigManager.getString("serverAccountName");
-            if(!account.equals("") && EconomyManager.hasAccount(account)){
+            if(account != null && EconomyManager.hasAccount(account)){
                 EconomyManager.substract(account, getSellPrice());
             }
         }

@@ -1,4 +1,4 @@
-package com.nijikokun.register.payment;
+package com.nijikokun.register.payment.methods;
 
 import com.iConomy.iConomy;
 import com.iConomy.system.Account;
@@ -6,12 +6,12 @@ import com.iConomy.system.BankAccount;
 import com.iConomy.system.Holdings;
 import com.iConomy.util.Constants;
 
-public class MethodiCo5 implements Method {
-    private iConomy iConomy;
+import com.nijikokun.register.payment.Method;
 
-    public MethodiCo5(iConomy iConomy) {
-        this.iConomy = iConomy;
-    }
+import org.bukkit.plugin.Plugin;
+
+public class iCo5 implements Method {
+    private iConomy iConomy;
 
     public iConomy getPlugin() {
         return this.iConomy;
@@ -52,6 +52,14 @@ public class MethodiCo5 implements Method {
     public MethodBankAccount getBankAccount(String bank, String name) {
         return new iCoBankAccount(this.iConomy.getBank(bank).getAccount(name));
     }
+	
+    public boolean isCompatible(Plugin plugin) {
+        return plugin.getDescription().getName().equalsIgnoreCase("iconomy") && plugin.getClass().getName().equals("com.iConomy.iConomy") && plugin instanceof iConomy;
+    }
+
+    public void setPlugin(Plugin plugin) {
+        iConomy = (iConomy)plugin;
+    }
 
     public class iCoAccount implements MethodAccount {
         private Account account;
@@ -68,6 +76,12 @@ public class MethodiCo5 implements Method {
 
         public double balance() {
             return this.holdings.balance();
+        }
+
+        public boolean set(double amount) {
+            if(this.holdings == null) return false;
+            this.holdings.set(amount);
+            return true;
         }
 
         public boolean add(double amount) {
@@ -140,6 +154,12 @@ public class MethodiCo5 implements Method {
 
         public double balance() {
             return this.holdings.balance();
+        }
+
+        public boolean set(double amount) {
+            if(this.holdings == null) return false;
+            this.holdings.set(amount);
+            return true;
         }
 
         public boolean add(double amount) {

@@ -104,6 +104,11 @@ public class SignManager extends BlockListener {
                     p.sendMessage(ConfigManager.getLanguage("Negative_price"));
                     return;
                 }
+                if(!priceIsOK(text[2]) && !isAdmin){
+                	p.sendMessage(ConfigManager.getLanguage("Incorrect_price"));
+                	Basic.cancelEventAndDropSign(event);
+                	return;
+                }
                 if (Integer.parseInt(text[1]) < 1) {
                     Basic.cancelEventAndDropSign(event);
                     p.sendMessage(ConfigManager.getLanguage("Incorrect_item_amount"));
@@ -172,12 +177,14 @@ public class SignManager extends BlockListener {
         }
     }
 
-    private boolean priceIsOK(String signLine, Material item) {
-        Double maxPrice = ConfigManager.getDouble(item.getId() + ".maxPrice");
-        Double minPrice = ConfigManager.getDouble(item.getId() + ".minPrice");
+    private boolean priceIsOK(String signLine) {
+        Double maxPrice = ConfigManager.getDouble("maxPrice");
+        Double minPrice = ConfigManager.getDouble("minPrice");
         Float buyPrice = buyPrice(signLine);
         Float sellPrice = sellPrice(signLine);
-        return !(maxPrice != -1 && (buyPrice > maxPrice || sellPrice > maxPrice)) && !(minPrice != -1 && (buyPrice < maxPrice || sellPrice < maxPrice));
+        
+        System.out.println(maxPrice + " " + minPrice + " " + buyPrice + " " + sellPrice);
+        return !(maxPrice != -1 && (buyPrice > maxPrice || sellPrice > maxPrice)) && !(minPrice != -1 && (buyPrice < minPrice || sellPrice < minPrice));
     }
 
 
@@ -197,13 +204,13 @@ public class SignManager extends BlockListener {
     public static float buyPrice(String text) {
         text = text.replace(" ", "");
         text = text.toLowerCase();
-        if (!text.contains("b")) {
-            return 0;
-        }
         //text = text.replaceAll("(?!free)[A-Z,a-z]", "");
-        text = text.replace("b", "");
         String bs[] = text.split(":");
         if (bs.length == 1) {
+        	if (!text.contains("b")) {
+                return 0;
+            }
+        	text = text.replace("b", "");
             //text = text.replace("B", "");
             if (text.equals("free")) {
                 return -1;
@@ -232,12 +239,12 @@ public class SignManager extends BlockListener {
     public static float sellPrice(String text) {
         text = text.replace(" ", "");
         text = text.toLowerCase();
-        if (!text.contains("s")) {
-            return 0;
-        }
-        text = text.replace("s", "");
         String bs[] = text.split(":");
         if (bs.length == 1) {
+        	if (!text.contains("s")) {
+                return 0;
+            }
+        	text = text.replace("s", "");
             if (text.equals("free")) {
                 return -1;
             }
@@ -246,6 +253,7 @@ public class SignManager extends BlockListener {
             }
         } else if (bs.length == 2) {
             text = bs[1];
+            text = text.replace("s", "");
             if (text.equals("free")) {
                 return -1;
             }

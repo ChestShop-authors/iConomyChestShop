@@ -1,76 +1,82 @@
 package com.nijikokun.register.payment;
 
-import com.iConomy.iConomy;
-import cosine.boseconomy.BOSEconomy;
-import com.earth2me.essentials.Essentials;
-
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.PluginDescriptionFile;
 
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Methods.java
+ * Controls the getting / setting of methods & the method of payment used.
+ *
+ * @author: Nijikokun<nijikokun@gmail.com> (@nijikokun)
+ * @copyright: Copyright (C) 2011
+ * @license: GNUv3 Affero License <http://www.gnu.org/licenses/agpl-3.0.html>
+ */
 public class Methods {
+
     private Method Method = null;
-    public Plugin method = null;
-    
-    public boolean setMethod(Plugin method) {
-        PluginManager loader = method.getServer().getPluginManager();
+    private Set<Method> Methods = new HashSet<Method>();
+    private Set<String> Dependencies = new HashSet<String>();
 
-        if(method.isEnabled()) {
-            PluginDescriptionFile info = method.getDescription();
-            String name = info.getName();
-
-            if(name.equalsIgnoreCase("iconomy")) {
-                if(method.getClass().getName().equals("com.iConomy.iConomy"))
-                    Method = new MethodiCo5((iConomy)method);
-                else { Method = new MethodiCo4((com.nijiko.coelho.iConomy.iConomy)method); }
-            } else if(name.equalsIgnoreCase("boseconomy")) {
-                Method = new MethodBOSEconomy((BOSEconomy)method);
-            } else if(name.equalsIgnoreCase("essentials")) {
-                if(!((Essentials)method).isIConomyFallbackEnabled()) Method = new MethodEEco((Essentials)method);
-            }
-        }
-        
-        if(!hasMethod()) {
-            if(loader.getPlugin("iConomy") != null) {
-                method =  loader.getPlugin("iConomy");
-                if(method.getClass().getName().equals("com.iConomy.iConomy"))
-                    Method = new MethodiCo5((iConomy)method);
-                else { Method = new MethodiCo4((com.nijiko.coelho.iConomy.iConomy)method); }
-            } else if(loader.getPlugin("BOSEconomy") != null) {
-                method = loader.getPlugin("BOSEconomy");
-                Method = new MethodBOSEconomy((BOSEconomy)method);
-            } else if(loader.getPlugin("Essentials") != null) {
-                method = loader.getPlugin("Essentials");
-                if(!((Essentials)method).isIConomyFallbackEnabled()) Method = new MethodEEco((Essentials)method);
-            }
-        }
-        
-        return hasMethod();
+    public Methods() {
+        this.addMethod("iConomy", new com.nijikokun.register.payment.methods.iCo4());
+        this.addMethod("iConomy", new com.nijikokun.register.payment.methods.iCo5());
+        this.addMethod("BOSEconomy", new com.nijikokun.register.payment.methods.BOSE());
+        this.addMethod("Essentials", new com.nijikokun.register.payment.methods.EE17());
     }
 
-    public boolean checkDisabled(Plugin method) {
-        PluginDescriptionFile info = method.getDescription();
-        String name = info.getName();
+    public Set<String> getDependencies() {
+        return Dependencies;
+    }
 
-        if(name.equalsIgnoreCase("iconomy")) {
-            if(method.getClass().getName().equals("com.iConomy.iConomy"))
-                Method = null;
-            else { Method = null; }
-        } else if(name.equalsIgnoreCase("boseconomy")) {
-            Method = null;
-        } else if(name.equalsIgnoreCase("essentials")) {
-            Method = null;
+    public Method createMethod(Plugin plugin) {
+        for (Method method: Methods) {
+            if (method.isCompatible(plugin)) {
+                method.setPlugin(plugin);
+                return method;
+            }
         }
 
-        return (Method == null);
+        return null;
+    }
+
+    private void addMethod(String name, Method method) {
+        Dependencies.add(name);
+        Methods.add(method);
     }
 
     public boolean hasMethod() {
-        return (Method != null);
+        return (this.Method != null);
+    }
+
+    public boolean setMethod(Plugin method) {
+        if(hasMethod()) return true;
+
+        PluginManager manager = method.getServer().getPluginManager();
+        Plugin plugin = null;
+
+        for(String name: this.getDependencies()) {
+            if(hasMethod()) break;
+            if(method.getDescription().getName().equals(name)) plugin = method; else  plugin = manager.getPlugin(name);
+            if(plugin == null) continue;
+            if(!plugin.isEnabled()) continue;
+
+            Method current = this.createMethod(plugin);
+            if (current != null) this.Method = current;
+        }
+
+        return hasMethod();
     }
 
     public Method getMethod() {
         return Method;
     }
 
+    public boolean checkDisabled(Plugin method) {
+        if(!hasMethod()) return true;
+        if (Method.isCompatible(method)) Method = null;
+        return (Method == null);
+    }
 }

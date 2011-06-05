@@ -19,8 +19,10 @@ public class DBqueue implements Runnable{
     }
 
     public static void saveQueueOnExit(){
-        iConomyChestShop.getPlugin().getDatabase().save(queue);
-        queue.clear();
+        try{
+            iConomyChestShop.getPlugin().getDatabase().save(queue);
+            queue.clear();
+        }catch (Exception ignored){}
     }
     
     public void run(){
