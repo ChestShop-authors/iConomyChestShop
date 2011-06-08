@@ -182,8 +182,6 @@ public class SignManager extends BlockListener {
         Double minPrice = ConfigManager.getDouble("minPrice");
         Float buyPrice = buyPrice(signLine);
         Float sellPrice = sellPrice(signLine);
-        
-        System.out.println(maxPrice + " " + minPrice + " " + buyPrice + " " + sellPrice);
         return !(maxPrice != -1 && (buyPrice > maxPrice || sellPrice > maxPrice)) && !(minPrice != -1 && (buyPrice < minPrice || sellPrice < minPrice));
     }
 
@@ -220,7 +218,7 @@ public class SignManager extends BlockListener {
             }
         } else if (bs.length == 2) {
             text = bs[0];
-            //text = text.replace("B", "");
+            text = text.replace("b", "");
             if (text.equals("free")) {
                 return -1;
             }
